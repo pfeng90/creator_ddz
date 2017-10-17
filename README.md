@@ -1,5 +1,4 @@
 # creator_ddz
-use cocos creator create a single ddz game 
+use CocosCreator create a single ddz game 
 
-使用Cocos creator 引擎，学习心得开发模式
-
+使用CocosCreator 引擎，学习心得开发模式
