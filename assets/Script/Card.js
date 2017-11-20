@@ -46,7 +46,7 @@ cc.Class({
         if (bIsJoker)
         {
             this.suit.node.active = false;
-            this.suit_big.spriteFrame = this.texSuitBig[card.point > 16 ? 4 : 5];
+            this.suit_big.spriteFrame = this.texSuitBig[card.point > 16 ? 5 : 4];
             bIsRed = card.point > 16;
         }
         else

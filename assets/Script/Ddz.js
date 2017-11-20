@@ -22,7 +22,7 @@ cc.Class({
         var card = cc.instantiate(this.cardPrefab);
         this.desktop.addChild(card);
         var cardRender = card.getComponent('Card');
-        cardRender.init({point: 13, suit: 3});
+        cardRender.init({point: 16, suit: 3});
     },
 
     // called every frame, uncomment this function to activate update callback
