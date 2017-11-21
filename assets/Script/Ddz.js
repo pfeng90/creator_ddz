@@ -21,8 +21,8 @@ cc.Class({
     onLoad: function () {
         var card = cc.instantiate(this.cardPrefab);
         this.desktop.addChild(card);
-        var cardRender = card.getComponent('Card');
-        cardRender.init({point: 15, suit: 3});
+        var cardRender = card.getComponent('Player');
+        cardRender.init({bIsSelf: true, name: '男农民', coin: 3000});
     },
 
     // called every frame, uncomment this function to activate update callback
