@@ -12,17 +12,19 @@ cc.Class({
         //    readonly: false,    // optional, default is false
         // },
         // ...
-        desktop: cc.Node,
-        cardPrefab: cc.Prefab
+        ndPlayerPos: [cc.Node],
+        playerPrefab: cc.Prefab
         
     },
 
     // use this for initialization
     onLoad: function () {
-        var card = cc.instantiate(this.cardPrefab);
-        this.desktop.addChild(card);
-        var cardRender = card.getComponent('Player');
-        cardRender.init({bIsSelf: true, name: '男农民', coin: 3000});
+        this.ndPlayerPos.forEach((ndPlayer, i) => {
+            var player = cc.instantiate(this.playerPrefab);
+            ndPlayer.addChild(player);
+            var playerCom = player.getComponent('Player');
+            playerCom.init({bIsSelf: i === 0, name: 'kkkkk', coin: 30000});
+        })
     },
 
     // called every frame, uncomment this function to activate update callback

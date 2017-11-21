@@ -1169,7 +1169,7 @@
     },
     "_children": [],
     "_tag": -1,
-    "_active": true,
+    "_active": false,
     "_components": [
       {
         "__id__": 37
@@ -1526,7 +1526,8 @@
       "__id__": 45
     },
     "_ndAvator": null,
-    "_ndRole": null
+    "_ndRole": null,
+    "_bIsSelf": null
   },
   {
     "__type__": "cc.PrefabInfo",
