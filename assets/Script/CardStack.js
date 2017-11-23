@@ -10,9 +10,14 @@ cc.Class({
             default: 0,
             type: cc.Integer
         },
+        nJumpHeight: {
+            default: 30,
+            type: cc.Integer
+        },
 
         cardPrefab: cc.Prefab,
         _arrCards: [],
+        _arrCardNodes: [cc.Node],
     },
 
     // use this for initialization
@@ -27,26 +32,98 @@ cc.Class({
         var nOffsetX = this._arrCards.length % 2 === 0 ? - this.nGap / 2 : 0;
         var nLeftOffset = - Math.floor((this._arrCards.length - 1) / 2) * this.nGap
         var nTotalOffset = nLeftOffset + nOffsetX;
+        var cardSize = new cc.Size(0, 0);
         this._arrCards.forEach( (cardData, index) => {
             var card = cc.instantiate(this.cardPrefab);
             card.x = nTotalOffset + index * this.nGap;
             this.node.addChild(card);
             var cardCom = card.getComponent('Card');
             cardCom.init(cardData);
-        })
-        
-    },
+            cardSize.width = card.width;
+            cardSize.height = card.height;
 
-    start: function () {
-        console.log(this.node.getContentSize());
-      },
+            card.componet = cardCom;
+            card.selectOrNot = () => {
+                card.y = card.y != 0 ? 0 : this.nJumpHeight;
+            };
+
+            this._arrCardNodes.push(card);
+        })
+
+        this.node.width = cardSize.width + (this._arrCards.length - 1) * this.nGap;
+        this.node.height = cardSize.height + this.nJumpHeight;
+        
+        this.setTouchEventEnable();
+    },
 
     init: function (arrCards) {
         this._arrCards = arrCards;
     },
 
-    sort: function() {
+    sort: function () {
 
+    },
+
+    setTouchEventEnable: function () {
+        var _getCurrentCard = ptTouch => {
+            for (var i = this._arrCardNodes.length - 1 ; i > -1; i--)
+            {
+                var card = this._arrCardNodes[i];
+                var rect = card.getBoundingBox();
+                if (cc.rectContainsPoint(rect, ptTouch))
+                {
+                    return card;
+                }
+            }
+            return null;
+        }
+
+        var lastCard = null;
+        var arrSelectedCard = [];
+        var _clearTempData = bEffect => {
+            lastCard = null;
+            arrSelectedCard.forEach(card => {
+                if (bEffect === true) {
+                    card.selectOrNot();
+                }
+                card.componet.setSelected(false);
+            })
+            arrSelectedCard = [];
+        }
+
+        this.node.on('touchstart', event => {
+            var ptTouch = this.node.convertTouchToNodeSpaceAR(event.touch);
+            lastCard = _getCurrentCard(ptTouch);
+        })
+
+        this.node.on('touchmove', event => {
+            if (lastCard && !lastCard.componet.getSelected()) {
+                lastCard.componet.setSelected(true);
+                arrSelectedCard.push(lastCard);
+            }
+            var ptTouch = this.node.convertTouchToNodeSpaceAR(event.touch);
+            var card = _getCurrentCard(ptTouch);
+            if (card && card !== lastCard) {
+                if (card === arrSelectedCard[arrSelectedCard.length - 2]) {
+                    lastCard.componet.setSelected(false);
+                    arrSelectedCard.pop();
+                }
+                else {
+                    card.componet.setSelected(true);
+                    arrSelectedCard.push(card);
+                }
+                lastCard = card;
+                
+            }
+        })
+
+        this.node.on('touchend', event => {
+            _clearTempData(true);
+        })
+
+        this.node.on('touchcancel', event => {
+            _clearTempData();
+        })
     },
 
     // called every frame, uncomment this function to activate update callback

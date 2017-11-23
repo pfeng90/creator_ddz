@@ -31,7 +31,8 @@ cc.Class({
         texSuitBig: {
             default: [],
             type: [cc.SpriteFrame]
-        }
+        },
+        _bIsSelected: false,
     },
 
     // use this for initialization
@@ -67,6 +68,18 @@ cc.Class({
             this.point.spriteFrame = this.texPointBlack[card.point];
             this.point_back.spriteFrame = this.texPointBlack[card.point];
         }
+    },
+
+    setSelected: function (bSelected) {
+        if (bSelected != this._bIsSelected)
+        {
+            this.node.color = bSelected === true ? cc.Color.GRAY : cc.Color.WHITE;
+            this._bIsSelected = bSelected;
+        }
+    },
+
+    getSelected: function () {
+        return this._bIsSelected;
     },
 
     // called every frame, uncomment this function to activate update callback
