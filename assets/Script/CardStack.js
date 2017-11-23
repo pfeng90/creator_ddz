@@ -78,10 +78,8 @@ cc.Class({
             return null;
         }
 
-        var lastCard = null;
         var arrSelectedCard = [];
-        var _clearTempData = bEffect => {
-            lastCard = null;
+        var _clearSelectedCards = bEffect => {
             arrSelectedCard.forEach(card => {
                 if (bEffect === true) {
                     card.selectOrNot();
@@ -93,13 +91,16 @@ cc.Class({
 
         this.node.on('touchstart', event => {
             var ptTouch = this.node.convertTouchToNodeSpaceAR(event.touch);
-            lastCard = _getCurrentCard(ptTouch);
+            var card = _getCurrentCard(ptTouch);
+            if (card) {
+                arrSelectedCard.push(card);
+            }
         })
 
         this.node.on('touchmove', event => {
+            var lastCard = arrSelectedCard[arrSelectedCard.length - 1];
             if (lastCard && !lastCard.componet.getSelected()) {
                 lastCard.componet.setSelected(true);
-                arrSelectedCard.push(lastCard);
             }
             var ptTouch = this.node.convertTouchToNodeSpaceAR(event.touch);
             var card = _getCurrentCard(ptTouch);
@@ -112,17 +113,15 @@ cc.Class({
                     card.componet.setSelected(true);
                     arrSelectedCard.push(card);
                 }
-                lastCard = card;
-                
             }
         })
 
         this.node.on('touchend', event => {
-            _clearTempData(true);
+            _clearSelectedCards(true);
         })
 
         this.node.on('touchcancel', event => {
-            _clearTempData();
+            _clearSelectedCards();
         })
     },
 
