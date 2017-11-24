@@ -2,8 +2,12 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
-        nGap: {
+        nGapX: {
             default: 40,
+            type: cc.Integer
+        },
+        nGapY: {
+            default: 100,
             type: cc.Integer
         },
         nMaxWidth: {
@@ -28,19 +32,93 @@ cc.Class({
             {point: 15, suit: 2},
             {point: 17, suit: 1},
             {point: 16, suit: 3},
+            {point: 5, suit: 3},
+            {point: 5, suit: 3},
+            {point: 15, suit: 2},
+            {point: 17, suit: 1},
+            {point: 16, suit: 3},
+            {point: 5, suit: 3},
+            {point: 15, suit: 2},
+            {point: 5, suit: 3},
+            {point: 15, suit: 2},
         ];
-        var nOffsetX = this._arrCards.length % 2 === 0 ? - this.nGap / 2 : 0;
-        var nLeftOffset = - Math.floor((this._arrCards.length - 1) / 2) * this.nGap
-        var nTotalOffset = nLeftOffset + nOffsetX;
-        var cardSize = new cc.Size(0, 0);
+
+        let anchorType = {
+            LEFT : 0,
+            CENTER : 1, 
+            RIGHT: 2,
+        }
+
+        let ant = anchorType.CENTER;
+
+        if (this.node.anchorX < 0.5) {
+            ant = anchorType.LEFT;
+        }
+        else if (this.node.anchorX > 0.5) {
+            ant = anchorType.RIGHT;
+        }
+
+        let nTotalOffsetX = 0;
+        let nTotalOffsetY = 0;
+        
+
+        let cardSize = new cc.Size(0, 0);
+        let cardins = cc.instantiate(this.cardPrefab);
+        cardSize.width = cardins.width;
+        cardSize.height = cardins.height;
+        cardins.destroy();
+
+        let nRowCount = 0;
+        
+        if (this.nMaxWidth > 0) {
+            let gap = this.nMaxWidth - cardSize.width;
+            gap = gap > 0 ? gap : 0;
+            nRowCount = Math.floor( gap / this.nGapX ) + 1;
+        }
+
+        switch (ant)
+        {
+            case anchorType.LEFT:
+                break;
+            case anchorType.RIGHT:
+                break;
+            default:
+                let nOffsetX = this._arrCards.length % 2 === 0 ? - this.nGapX / 2 : 0;
+                let nLeftOffset = - Math.floor((this._arrCards.length - 1) / 2) * this.nGapX;
+                nTotalOffsetX = nLeftOffset + nOffsetX;
+                break;
+        }
+        
+        let nCardCount = this._arrCards.length;
+        let nMaxRow = Math.floor(nCardCount / nRowCount);
         this._arrCards.forEach( (cardData, index) => {
-            var card = cc.instantiate(this.cardPrefab);
-            card.x = nTotalOffset + index * this.nGap;
+            let card = cc.instantiate(this.cardPrefab);
+                       
+            switch (ant)
+            {
+                case anchorType.LEFT:
+                    card.x = index % nRowCount * this.nGapX;
+                    card.y = - Math.floor(index / nRowCount) * this.nGapY;
+                    break;
+                case anchorType.RIGHT:
+                    let row = Math.floor(index / nRowCount)
+                    let col = index % nRowCount;
+                    if (row === nMaxRow) {
+                        col = nRowCount - ( nCardCount - index );
+                    }
+                    card.x = col * this.nGapX;
+                    card.y = - row * this.nGapY;
+                    break;
+                default:
+                    card.x = nTotalOffsetX;
+                    card.y = nTotalOffsetY;
+                    nTotalOffsetX += this.nGapX; 
+                    break;
+            }
+            
             this.node.addChild(card);
-            var cardCom = card.getComponent('Card');
+            let cardCom = card.getComponent('Card');
             cardCom.init(cardData);
-            cardSize.width = card.width;
-            cardSize.height = card.height;
 
             card.componet = cardCom;
             card.selectOrNot = () => {
@@ -50,14 +128,16 @@ cc.Class({
             this._arrCardNodes.push(card);
         })
 
-        this.node.width = cardSize.width + (this._arrCards.length - 1) * this.nGap;
+        this.node.width = cardSize.width + (this._arrCards.length - 1) * this.nGapX;
         this.node.height = cardSize.height + this.nJumpHeight;
         
-        this.setTouchEventEnable();
     },
 
-    init: function (arrCards) {
+    init: function (arrCards, bTouchable) {
         this._arrCards = arrCards;
+        if (bTouchable) {
+            this.setTouchEventEnable();
+        }
     },
 
     sort: function () {
@@ -65,11 +145,11 @@ cc.Class({
     },
 
     setTouchEventEnable: function () {
-        var _getCurrentCard = ptTouch => {
-            for (var i = this._arrCardNodes.length - 1 ; i > -1; i--)
+        let _getCurrentCard = ptTouch => {
+            for (let i = this._arrCardNodes.length - 1 ; i > -1; i--)
             {
-                var card = this._arrCardNodes[i];
-                var rect = card.getBoundingBox();
+                let card = this._arrCardNodes[i];
+                let rect = card.getBoundingBox();
                 if (cc.rectContainsPoint(rect, ptTouch))
                 {
                     return card;
@@ -78,8 +158,8 @@ cc.Class({
             return null;
         }
 
-        var arrSelectedCard = [];
-        var _clearSelectedCards = bEffect => {
+        let arrSelectedCard = [];
+        let _clearSelectedCards = bEffect => {
             arrSelectedCard.forEach(card => {
                 if (bEffect === true) {
                     card.selectOrNot();
@@ -90,20 +170,20 @@ cc.Class({
         }
 
         this.node.on('touchstart', event => {
-            var ptTouch = this.node.convertTouchToNodeSpaceAR(event.touch);
-            var card = _getCurrentCard(ptTouch);
+            let ptTouch = this.node.convertTouchToNodeSpaceAR(event.touch);
+            let card = _getCurrentCard(ptTouch);
             if (card) {
                 arrSelectedCard.push(card);
             }
         })
 
         this.node.on('touchmove', event => {
-            var lastCard = arrSelectedCard[arrSelectedCard.length - 1];
+            let lastCard = arrSelectedCard[arrSelectedCard.length - 1];
             if (lastCard && !lastCard.componet.getSelected()) {
                 lastCard.componet.setSelected(true);
             }
-            var ptTouch = this.node.convertTouchToNodeSpaceAR(event.touch);
-            var card = _getCurrentCard(ptTouch);
+            let ptTouch = this.node.convertTouchToNodeSpaceAR(event.touch);
+            let card = _getCurrentCard(ptTouch);
             if (card && card !== lastCard) {
                 if (card === arrSelectedCard[arrSelectedCard.length - 2]) {
                     lastCard.componet.setSelected(false);

@@ -13,7 +13,8 @@ cc.Class({
         // },
         // ...
         ndPlayerPos: [cc.Node],
-        playerPrefab: cc.Prefab
+        playerPrefab: cc.Prefab,
+        cardstackPrefab: cc.Prefab,
         
     },
 

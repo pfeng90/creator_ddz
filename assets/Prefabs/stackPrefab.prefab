@@ -10,7 +10,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "stackPrefab",
+    "_name": "ndCardStack2",
     "_objFlags": 0,
     "_parent": null,
     "_children": [],
@@ -51,7 +51,7 @@
     "_position": {
       "__type__": "cc.Vec2",
       "x": 0,
-      "y": 0
+      "y": -123
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -70,10 +70,12 @@
     "_enabled": true,
     "nGap": 40,
     "nMaxWidth": 0,
+    "nJumpHeight": 30,
     "cardPrefab": {
       "__uuid__": "8fc6dce4-efe1-43b0-b86e-7c5775fed87b"
     },
-    "_arrCards": []
+    "_arrCards": [],
+    "_arrCardNodes": []
   },
   {
     "__type__": "cc.PrefabInfo",
