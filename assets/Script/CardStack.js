@@ -59,7 +59,6 @@ cc.Class({
         }
 
         let nTotalOffsetX = 0;
-        let nTotalOffsetY = 0;
         
 
         let cardSize = new cc.Size(0, 0);
@@ -68,12 +67,12 @@ cc.Class({
         cardSize.height = cardins.height;
         cardins.destroy();
 
-        let nRowCount = 0;
+        let nColCount = 0;
         
         if (this.nMaxWidth > 0) {
             let gap = this.nMaxWidth - cardSize.width;
             gap = gap > 0 ? gap : 0;
-            nRowCount = Math.floor( gap / this.nGapX ) + 1;
+            nColCount = Math.floor( gap / this.nGapX ) + 1;
         }
 
         switch (ant)
@@ -90,28 +89,28 @@ cc.Class({
         }
         
         let nCardCount = this._arrCards.length;
-        let nMaxRow = Math.floor(nCardCount / nRowCount);
+        let nMaxRow = Math.floor(nCardCount / nColCount);
+        let nHalfWidth = cardSize.width / 2;
         this._arrCards.forEach( (cardData, index) => {
             let card = cc.instantiate(this.cardPrefab);
                        
             switch (ant)
             {
                 case anchorType.LEFT:
-                    card.x = index % nRowCount * this.nGapX;
-                    card.y = - Math.floor(index / nRowCount) * this.nGapY;
+                    card.x = index % nColCount * this.nGapX + nHalfWidth;
+                    card.y = - Math.floor(index / nColCount) * this.nGapY;
                     break;
                 case anchorType.RIGHT:
-                    let row = Math.floor(index / nRowCount)
-                    let col = index % nRowCount;
+                    let row = Math.floor(index / nColCount)
+                    let col = index % nColCount;
                     if (row === nMaxRow) {
-                        col = nRowCount - ( nCardCount - index );
+                        col = nColCount - ( nCardCount - index );
                     }
-                    card.x = col * this.nGapX;
+                    card.x = - nHalfWidth - (nColCount - 1 - col) * this.nGapX;
                     card.y = - row * this.nGapY;
                     break;
                 default:
                     card.x = nTotalOffsetX;
-                    card.y = nTotalOffsetY;
                     nTotalOffsetX += this.nGapX; 
                     break;
             }

@@ -577,8 +577,8 @@
     "_scaleY": 0.6,
     "_position": {
       "__type__": "cc.Vec2",
-      "x": 358,
-      "y": 31
+      "x": 318.4,
+      "y": 10.5
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -597,7 +597,7 @@
     "_enabled": true,
     "nGapX": 40,
     "nGapY": 100,
-    "nMaxWidth": 360,
+    "nMaxWidth": 300,
     "nJumpHeight": 30,
     "cardPrefab": {
       "__uuid__": "8fc6dce4-efe1-43b0-b86e-7c5775fed87b"
