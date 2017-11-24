@@ -12,24 +12,15 @@ cc.Class({
         //    readonly: false,    // optional, default is false
         // },
         // ...
-        ndPlayerPos: [cc.Node],
-        playerPrefab: cc.Prefab,
-        cardstackPrefab: cc.Prefab,
-        
+        lbCount : cc.Label,
     },
 
     // use this for initialization
     onLoad: function () {
-        this.ndPlayerPos.forEach((ndPlayer, i) => {
-            var player = cc.instantiate(this.playerPrefab);
-            ndPlayer.addChild(player);
-            var playerCom = player.getComponent('Player');
-            playerCom.init({bIsSelf: i === 0, name: 'kkkkk', coin: 30000});
-        })
     },
 
-    onBtnPrepareClicked: function () {
-        console.log('prepare');
+    setCount: function (nCount) {
+        this.lbCount.string = nCount;
     },
 
     // called every frame, uncomment this function to activate update callback

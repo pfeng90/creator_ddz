@@ -26,23 +26,6 @@ cc.Class({
 
     // use this for initialization
     onLoad: function () {
-        this._arrCards = [
-            {point: 5, suit: 3},
-            {point: 5, suit: 3},
-            {point: 15, suit: 2},
-            {point: 17, suit: 1},
-            {point: 16, suit: 3},
-            {point: 5, suit: 3},
-            {point: 5, suit: 3},
-            {point: 15, suit: 2},
-            {point: 17, suit: 1},
-            {point: 16, suit: 3},
-            {point: 5, suit: 3},
-            {point: 15, suit: 2},
-            {point: 5, suit: 3},
-            {point: 15, suit: 2},
-        ];
-
         let anchorType = {
             LEFT : 0,
             CENTER : 1, 
