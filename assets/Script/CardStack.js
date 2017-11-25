@@ -24,8 +24,7 @@ cc.Class({
         _arrCardNodes: [cc.Node],
     },
 
-    // use this for initialization
-    onLoad: function () {
+    _display: function () {
         let anchorType = {
             LEFT : 0,
             CENTER : 1, 
@@ -56,6 +55,9 @@ cc.Class({
             let gap = this.nMaxWidth - cardSize.width;
             gap = gap > 0 ? gap : 0;
             nColCount = Math.floor( gap / this.nGapX ) + 1;
+        }
+        else {
+            ant = anchorType.CENTER; 
         }
 
         switch (ant)
@@ -112,7 +114,11 @@ cc.Class({
 
         this.node.width = cardSize.width + (this._arrCards.length - 1) * this.nGapX;
         this.node.height = cardSize.height + this.nJumpHeight;
-        
+    },
+
+    // use this for initialization
+    onLoad: function () {
+        this._display();
     },
 
     init: function (arrCards, bTouchable) {
@@ -124,6 +130,20 @@ cc.Class({
 
     sort: function () {
 
+    },
+
+    resetCards: function (arrCards) {
+        this.clearCards();
+        this._arrCards =  arrCards;
+        this._display();
+    },
+
+    clearCards: function () {
+        this._arrCards = [];
+        this._arrCardNodes.forEach(cardnode => {
+            cardnode.destroy();
+        });
+        this._arrCardNodes = [];
     },
 
     setTouchEventEnable: function () {

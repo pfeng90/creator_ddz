@@ -257,7 +257,10 @@
     "_enabled": true,
     "lbCount": {
       "__id__": 6
-    }
+    },
+    "_nCount": 0,
+    "nCount": 30,
+    "_funcTimeout": null
   },
   {
     "__type__": "cc.PrefabInfo",

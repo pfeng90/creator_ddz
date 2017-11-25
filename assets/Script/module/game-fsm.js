@@ -29,7 +29,7 @@ exports = {
 
     init: function (delegate) {
         // send log messages, warnings and errors to the console
-        State.console = console;
+        // State.console = console;
 
         model = new State.StateMachine("root");
         var initial = new State.PseudoState("init-root", model, State.PseudoStateKind.Initial);
@@ -64,31 +64,6 @@ exports = {
             delegate.onStateChanged(this.StateType.Settled);
         })
 
-        // 开局后的子状态
-
-        // var initialP = new State.PseudoState("init 已开局", playing, State.PseudoStateKind.Initial);
-        // var deal = new State.State("发牌", playing);
-        // //var postDeal = new State.State("等待", playing);    // 询问玩家是否买保险，双倍、分牌等
-        // var playersTurn = new State.State("玩家决策", playing);
-        // var dealersTurn = new State.State("庄家决策", playing);
-
-        // initialP.to(deal);
-        // deal.to(playersTurn).when(on("dealed"));
-        // playersTurn.to(dealersTurn).when(on("player acted"));
-
-        // deal.entry(function () {
-        //     delegate.onEnterDealState();
-        // });
-        // playersTurn.entry(function () {
-        //     delegate.onPlayersTurnState(true);
-        // });
-        // playersTurn.exit(function () {
-        //     delegate.onPlayersTurnState(false);
-        // });
-        // dealersTurn.entry(function () {
-        //     delegate.onEnterDealersTurnState();
-        // });
-
         // create a State machine instance
         instance = new State.StateMachineInstance("fsm");
         State.initialise(model, instance);
@@ -104,7 +79,7 @@ exports = {
             setTimeout(function () {
                 State.evaluate(model, instance, message);
             }, 1);
-            return;
+            return; 
         }
         evaluating = true;
         State.evaluate(model, instance, message);

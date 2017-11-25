@@ -11,6 +11,7 @@ cc.Class({
         ndPanelPrepare: cc.Node,
         ndPanelSearch: cc.Node,
         ndPanelResult: cc.Node,
+        ndPanelPlaying: cc.Node,
         playerPrefab: cc.Prefab,
         cardstackPrefab: cc.Prefab,
         
@@ -53,16 +54,16 @@ cc.Class({
                 this.ndPanelPrepare.active = false;
                 setTimeout(() => {
                     fsm.changeState(fsm.StateEvent.Playing);
-                }, 3000);
+                }, 6000);
                 break;
             case fsm.StateType.Playing:
                 this.ndPanelSearch.active = false;
                 this.ndPanelResult.active = false;
                 this.ndPanelPrepare.active = false;
 
-                setTimeout(() => {
-                    fsm.changeState(fsm.StateEvent.Settled);
-                }, utils.getRandomInt(3000, 12000));
+                // setTimeout(() => {
+                //     fsm.changeState(fsm.StateEvent.Settled);
+                // }, utils.getRandomInt(3000, 12000));
                 break;
             case fsm.StateType.Settled:
                 this.ndPanelSearch.active = false;
@@ -72,6 +73,8 @@ cc.Class({
             default:
                 break;
         }
+
+        this.ndPanelPlaying.active = st === fsm.StateType.Playing;
     },
 
     // called every frame, uncomment this function to activate update callback
