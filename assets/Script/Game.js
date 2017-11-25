@@ -1,18 +1,16 @@
+import { setTimeout } from 'timers';
+
+var fsm = require('game-fsm');
+var utils = require('utils');
+
 cc.Class({
     extends: cc.Component,
 
     properties: {
-        // foo: {
-        //    default: null,      // The default value will be used only when the component attaching
-        //                           to a node for the first time
-        //    url: cc.Texture2D,  // optional, default is typeof default
-        //    serializable: true, // optional, default is true
-        //    visible: true,      // optional, default is true
-        //    displayName: 'Foo', // optional
-        //    readonly: false,    // optional, default is false
-        // },
-        // ...
         ndPlayerPos: [cc.Node],
+        ndPanelPrepare: cc.Node,
+        ndPanelSearch: cc.Node,
+        ndPanelResult: cc.Node,
         playerPrefab: cc.Prefab,
         cardstackPrefab: cc.Prefab,
         
@@ -26,10 +24,54 @@ cc.Class({
             var playerCom = player.getComponent('Player');
             playerCom.init({bIsSelf: i === 0, name: 'kkkkk', coin: 30000});
         })
+
+        fsm.init(this);
     },
 
     onBtnPrepareClicked: function () {
-        console.log('prepare');
+        fsm.changeState(fsm.StateEvent.Search);
+    },
+
+    onBtnContinueClicked: function () {
+        fsm.changeState(fsm.StateEvent.Continue);
+    },
+
+    onBtnExitClicked: function () {
+        fsm.changeState(fsm.StateEvent.Prepare);
+    },
+
+    onStateChanged: function (st) {
+        switch(st) {
+            case fsm.StateType.Prepare:
+                this.ndPanelSearch.active = false;
+                this.ndPanelResult.active = false;
+                this.ndPanelPrepare.active = true;
+                break;
+            case fsm.StateType.Search:
+                this.ndPanelSearch.active = true;
+                this.ndPanelResult.active = false;
+                this.ndPanelPrepare.active = false;
+                setTimeout(() => {
+                    fsm.changeState(fsm.StateEvent.Playing);
+                }, 3000);
+                break;
+            case fsm.StateType.Playing:
+                this.ndPanelSearch.active = false;
+                this.ndPanelResult.active = false;
+                this.ndPanelPrepare.active = false;
+
+                setTimeout(() => {
+                    fsm.changeState(fsm.StateEvent.Settled);
+                }, utils.getRandomInt(3000, 12000));
+                break;
+            case fsm.StateType.Settled:
+                this.ndPanelSearch.active = false;
+                this.ndPanelResult.active = true;
+                this.ndPanelPrepare.active = false;
+                break;
+            default:
+                break;
+        }
     },
 
     // called every frame, uncomment this function to activate update callback
