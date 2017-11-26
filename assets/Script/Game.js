@@ -54,7 +54,7 @@ cc.Class({
                 this.ndPanelPrepare.active = false;
                 setTimeout(() => {
                     fsm.changeState(fsm.StateEvent.Playing);
-                }, 6000);
+                }, 3000);
                 break;
             case fsm.StateType.Playing:
                 this.ndPanelSearch.active = false;

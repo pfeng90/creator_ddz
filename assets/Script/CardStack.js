@@ -146,6 +146,10 @@ cc.Class({
         this._arrCardNodes = [];
     },
 
+    getAllCardNodes: function () {
+        return this._arrCardNodes;
+    },
+
     setTouchEventEnable: function () {
         let _getCurrentCard = ptTouch => {
             for (let i = this._arrCardNodes.length - 1 ; i > -1; i--)

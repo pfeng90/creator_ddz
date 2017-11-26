@@ -9,6 +9,7 @@ cc.Class({
         ndCardStacks : [cc.Node],
         ndElectionCall : cc.Node,
         ndElectionGrab : cc.Node,
+        ndDeal : cc.Node,
     },
 
     // use this for initialization
@@ -26,11 +27,12 @@ cc.Class({
     onStateChanged: function (st) {
         this.ndElectionCall.active = st === fsm.StateType.ElectCall;
         this.ndElectionGrab.active = st === fsm.StateType.ElectGrab;
+        this.ndDeal.active = st === fsm.StateType.Deal;
         switch (st) {
             case fsm.StateType.Deal:
-                setTimeout(() => {
-                    fsm.changeState(fsm.StateEvent.Elect);
-                }, 500);
+                // setTimeout(() => {
+                //     fsm.changeState(fsm.StateEvent.Elect);
+                // }, 500);
                 break;
             case fsm.StateType.Elect:
                 fsm.changeState(fsm.StateEvent.ElectPrev);
