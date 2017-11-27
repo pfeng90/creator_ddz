@@ -1,4 +1,5 @@
 var fsm = require('play-fsm');
+var event = require('event');
 
 cc.Class({
     extends: cc.Component,
@@ -18,6 +19,10 @@ cc.Class({
         this.ndElectionGrab.active = false; 
 
         fsm.init(this);
+
+        this.node.on(event.DEAL_FINISH, function (event) {
+            fsm.changeState(fsm.StateEvent.Elect);
+        });
     },
 
     onEnable: function () {
