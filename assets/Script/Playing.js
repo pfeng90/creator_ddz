@@ -24,8 +24,16 @@ cc.Class({
 
         fsm.init(this);
 
-        this.node.on(event.DEAL_FINISH, function (event) {
+        this.node.on(event.DEAL_BEGIN, event => {
+            var pokerdata = this.ndPokerData.getComponent('PokerData');
+            var com = this.ndPlayerCardStack.getComponent('CardStack');
+            com.init(pokerdata.getPlayerPokers());
+        });
+
+        this.node.on(event.DEAL_FINISH, event => {
             fsm.changeState(fsm.StateEvent.Elect);
+            var com = this.ndPlayerCardStack.getComponent('CardStack');
+            com.sort();
         });
 
         this.node.on(event.DEAL_TO_LAST, event => {
@@ -54,9 +62,6 @@ cc.Class({
         this.ndDeal.active = st === fsm.StateType.Deal;
         switch (st) {
             case fsm.StateType.Deal:
-                var pokerdata = this.ndPokerData.getComponent('PokerData');
-                var com = this.ndPlayerCardStack.getComponent('CardStack');
-                com.init(pokerdata.getPlayerPokers());
                 break;
             case fsm.StateType.Elect:
                 fsm.changeState(fsm.StateEvent.ElectPrev);

@@ -40,6 +40,7 @@ cc.Class({
                 arrPokers.push(poker);
             }
         });
+        arrPokers.pop();
         return arrPokers; 
     },
 

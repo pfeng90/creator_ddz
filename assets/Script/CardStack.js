@@ -25,7 +25,7 @@ cc.Class({
         _nShowCount: 0,
     },
 
-    _display: function () {
+    _display: function (bHide) {
         let anchorType = {
             LEFT : 0,
             CENTER : 1, 
@@ -79,7 +79,6 @@ cc.Class({
         let nHalfWidth = cardSize.width / 2;
         this._arrCards.forEach( (cardData, index) => {
             let card = cc.instantiate(this.cardPrefab);
-                       
             switch (ant)
             {
                 case anchorType.LEFT:
@@ -111,6 +110,10 @@ cc.Class({
             };
 
             this._arrCardNodes.push(card);
+
+            if (bHide) {
+                card.active = false;
+            }
         })
 
         this.node.width = cardSize.width + (this._arrCards.length - 1) * this.nGapX;
@@ -119,25 +122,39 @@ cc.Class({
 
     // use this for initialization
     onLoad: function () {
-        this._display();
     },
 
     init: function (arrCards) {
         this._arrCards = arrCards;
         this._nShowCount = 0;
-        this._display();
+        this._display(true);
     },
 
-    showOneByOne : function () {
+    showOneByOne: function () {
         var card = this._arrCardNodes[this._nShowCount];
         if (card) {
-            // card.active = false;
+            card.active = true;
         }
-        this._nShowCount++;
+        this._nShowCount ++;
     },
 
     sort: function () {
+        this._arrCards.sort((a, b) => {
+            if (a.point > b.point) {
+                return -1;
+            } else if (a.point < b.point) {
+                return 1;
+            }
+            else {
+                return a.suit > b.suit ? -1 : 1;
+            }
+        });
 
+        this._arrCardNodes.forEach(cardnode => {
+            cardnode.destroy();
+        });
+        this._arrCardNodes = []; 
+        this._display();
     },
 
     resetCards: function (arrCards) {

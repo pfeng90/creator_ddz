@@ -44,6 +44,8 @@ cc.Class({
             backPokers[lordPoker.index] = lordPoker.poker;
             com.resetCards(backPokers);
 
+            this.node.dispatchEvent(new cc.Event.EventCustom(event.DEAL_BEGIN, true));
+
             var allCardNodes = com.getAllCardNodes();
             var nTargetCount = this.ptTargets.length;
             var ptCardStacks = this.ndCardStacks.getPosition();

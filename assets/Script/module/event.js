@@ -1,5 +1,8 @@
 module.exports = {
     // 发牌结束
+    DEAL_BEGIN: 'DEAL_BEGIN',
+
+    // 发牌结束
     DEAL_FINISH : 'DEAL_FINISH',
 
     // 发给自己
