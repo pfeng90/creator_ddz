@@ -10,7 +10,11 @@ cc.Class({
         ndCardStacks : [cc.Node],
         ndElectionCall : cc.Node,
         ndElectionGrab : cc.Node,
+        ndLastLeftCount : cc.Node,
+        ndNextLeftCount : cc.Node,
+        ndPlayerCardStack : cc.Node,
         ndDeal : cc.Node,
+        ndPokerData: cc.Node,
     },
 
     // use this for initialization
@@ -22,6 +26,21 @@ cc.Class({
 
         this.node.on(event.DEAL_FINISH, function (event) {
             fsm.changeState(fsm.StateEvent.Elect);
+        });
+
+        this.node.on(event.DEAL_TO_LAST, event => {
+            var com = this.ndLastLeftCount.getComponent('LeftCount');
+            com.addCount();
+        });
+
+        this.node.on(event.DEAL_TO_NEXT, event => {
+            var com = this.ndNextLeftCount.getComponent('LeftCount');
+            com.addCount();
+        });
+
+        this.node.on(event.DEAL_TO_SELF, event => {
+            var com = this.ndPlayerCardStack.getComponent('CardStack');
+            com.showOneByOne();
         });
     },
 
@@ -35,9 +54,9 @@ cc.Class({
         this.ndDeal.active = st === fsm.StateType.Deal;
         switch (st) {
             case fsm.StateType.Deal:
-                // setTimeout(() => {
-                //     fsm.changeState(fsm.StateEvent.Elect);
-                // }, 500);
+                var pokerdata = this.ndPokerData.getComponent('PokerData');
+                var com = this.ndPlayerCardStack.getComponent('CardStack');
+                com.init(pokerdata.getPlayerPokers());
                 break;
             case fsm.StateType.Elect:
                 fsm.changeState(fsm.StateEvent.ElectPrev);

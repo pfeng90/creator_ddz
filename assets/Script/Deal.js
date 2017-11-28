@@ -71,7 +71,7 @@ cc.Class({
                             cc.moveTo(dTime, ptTargets[num]),
                             cc.hide(),
                             cc.callFunc(() => {
-                                this.node.dispatchEvent(arrEvent[num]);
+                                this.node.dispatchEvent(new cc.Event.EventCustom(arrEvent[num], true));
                             }),
                         );
                         card.runAction(seq);

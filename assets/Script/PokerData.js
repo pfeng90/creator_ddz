@@ -33,6 +33,16 @@ cc.Class({
         }
     },
 
+    getPlayerPokers: function () {
+        var arrPokers = [];
+        this._arrAllPokers.forEach((poker, index) => {
+            if (index % 3 === 0) {
+                arrPokers.push(poker);
+            }
+        });
+        return arrPokers; 
+    },
+
     // called every frame, uncomment this function to activate update callback
     // update: function (dt) {
 

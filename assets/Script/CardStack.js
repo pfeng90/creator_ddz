@@ -22,6 +22,7 @@ cc.Class({
         cardPrefab: cc.Prefab,
         _arrCards: [],
         _arrCardNodes: [cc.Node],
+        _nShowCount: 0,
     },
 
     _display: function () {
@@ -99,7 +100,7 @@ cc.Class({
                     nTotalOffsetX += this.nGapX; 
                     break;
             }
-            
+
             this.node.addChild(card);
             let cardCom = card.getComponent('Card');
             cardCom.init(cardData);
@@ -121,11 +122,18 @@ cc.Class({
         this._display();
     },
 
-    init: function (arrCards, bTouchable) {
+    init: function (arrCards) {
         this._arrCards = arrCards;
-        if (bTouchable) {
-            this.setTouchEventEnable();
+        this._nShowCount = 0;
+        this._display();
+    },
+
+    showOneByOne : function () {
+        var card = this._arrCardNodes[this._nShowCount];
+        if (card) {
+            // card.active = false;
         }
+        this._nShowCount++;
     },
 
     sort: function () {
