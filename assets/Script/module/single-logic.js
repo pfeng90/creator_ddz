@@ -14,15 +14,19 @@ class SingleLogic {
 
         // 当前这一把的状态
 
-        let prepare = new State.State('准备', this.model);
-        let search = new State.State('搜寻玩家', this.model);
+        let idle = new State.State('等待', this.model);
+        let deal = new State.State('发牌', this.model);
+        let elect = new State.State('选举地主', this.model);
+        let raise = new State.State('加倍', this.model);
+        let play = new State.State('操作', this.model);
 
-        initial.to(prepare);
+        initial.to(idle);
 
-        prepare.entry( () => {
+        idle.entry( () => {
+            this.delegate.onStateChange(SingleLogic.StateType.Idle);
         });
 
-        search.entry ( () => {
+        deal.entry ( () => {
         });
 
         // create a State machine instance
