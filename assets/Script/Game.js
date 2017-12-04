@@ -2,6 +2,7 @@ import { setTimeout } from 'timers';
 
 var fsm = require('game-fsm');
 var utils = require('utils');
+var Events = require('event');
 
 cc.Class({
     extends: cc.Component,
@@ -14,7 +15,7 @@ cc.Class({
         ndPanelPlaying: cc.Node,
         playerPrefab: cc.Prefab,
         cardstackPrefab: cc.Prefab,
-        
+        ndSingleGame: cc.Node,
     },
 
     // use this for initialization
@@ -30,7 +31,8 @@ cc.Class({
     },
 
     onBtnPrepareClicked: function () {
-        fsm.changeState(fsm.StateEvent.Search);
+        // fsm.changeState(fsm.StateEvent.Search);
+        this.ndSingleGame.emit(Events.PLAYER_PREPARED);
     },
 
     onBtnContinueClicked: function () {

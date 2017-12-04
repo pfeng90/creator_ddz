@@ -13,4 +13,7 @@ module.exports = {
 
     // 发给下家
     DEAL_TO_NEXT : 'DEAL_TO_NEXT',
+
+    // 玩家准备
+    PLAYER_PREPARED : 'PLAYER_PREPARED',
 };
