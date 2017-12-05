@@ -18,21 +18,13 @@ cc.Class({
         ndCardStacks: cc.Node,
         ptTargets: [cc.Vec2],
         ptKeyCards: [cc.Vec2],
-        ndPokerData: cc.Node,
     },
 
     // use this for initialization
     onLoad: function () {
     },
 
-    onEnable : function () {
-        this.deal();
-    },
-
-    deal: function () {
-        var data = this.ndPokerData.getComponent('PokerData');
-        data.generatePokerData();
-        var lordPoker= data.getLordPoker();
+    deal: function (lordPoker) {
 
         var com = this.ndCardStacks.getComponent('CardStack');
         if (com) {

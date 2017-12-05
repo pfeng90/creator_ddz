@@ -1,5 +1,4 @@
-var fsm = require('play-fsm');
-var event = require('event');
+var Event = require('event');
 
 cc.Class({
     extends: cc.Component,
@@ -14,7 +13,7 @@ cc.Class({
         ndNextLeftCount : cc.Node,
         ndPlayerCardStack : cc.Node,
         ndDeal : cc.Node,
-        ndPokerData: cc.Node,
+        ndSingleGame: cc.Node,
     },
 
     // use this for initialization
@@ -22,94 +21,50 @@ cc.Class({
         this.ndElectionCall.active = false;
         this.ndElectionGrab.active = false; 
 
-        fsm.init(this);
+        this.ndSingleGame.on(Event.DEAL_POKERS, (event) => {
+            var comDeal = this.ndDeal.getComponent('Deal');
+            comDeal.deal(event.detail.lorderPoker);
 
-        this.node.on(event.DEAL_BEGIN, event => {
-            var pokerdata = this.ndPokerData.getComponent('PokerData');
-            var com = this.ndPlayerCardStack.getComponent('CardStack');
-            com.init(pokerdata.getPlayerPokers());
+            var comCard = this.ndPlayerCardStack.getComponent('CardStack');
+            comCard.init(event.detail.handPokers);
         });
 
-        this.node.on(event.DEAL_FINISH, event => {
-            fsm.changeState(fsm.StateEvent.Elect);
+        this.ndSingleGame.on(Event.CALL_LORDER, (event) => {
+            var playerIndex = event.detail;
+            this.ndCountdown.active = true;
+            this.ndCountdown.setPosition(this.ndCountdownPts[playerIndex]);
+            if (playerIndex == 0) {
+                this.ndElectionCall.active = true;
+            }
+        });
+
+        this.node.on(Event.DEAL_BEGIN, event => {
+        });
+
+        this.node.on(Event.DEAL_FINISH, event => {
             var com = this.ndPlayerCardStack.getComponent('CardStack');
             com.sort();
         });
 
-        this.node.on(event.DEAL_TO_LAST, event => {
+        this.node.on(Event.DEAL_TO_LAST, event => {
             var com = this.ndLastLeftCount.getComponent('LeftCount');
             com.addCount();
         });
 
-        this.node.on(event.DEAL_TO_NEXT, event => {
+        this.node.on(Event.DEAL_TO_NEXT, event => {
             var com = this.ndNextLeftCount.getComponent('LeftCount');
             com.addCount();
         });
 
-        this.node.on(event.DEAL_TO_SELF, event => {
+        this.node.on(Event.DEAL_TO_SELF, event => {
             var com = this.ndPlayerCardStack.getComponent('CardStack');
             com.showOneByOne();
         });
     },
 
-    onEnable: function () {
-        fsm.changeState(fsm.StateEvent.Deal);
-    },
-
-    onStateChanged: function (st) {
-        this.ndElectionCall.active = st === fsm.StateType.ElectCall;
-        this.ndElectionGrab.active = st === fsm.StateType.ElectGrab;
-        this.ndDeal.active = st === fsm.StateType.Deal;
-        switch (st) {
-            case fsm.StateType.Deal:
-                break;
-            case fsm.StateType.Elect:
-                fsm.changeState(fsm.StateEvent.ElectPrev);
-                break;
-            case fsm.StateType.ElectNext:
-            case fsm.StateType.ElectPrev:
-                setTimeout(() => {
-                    fsm.changeState(fsm.StateEvent.ElectPass);
-                }, 2000);
-                break;
-            default :
-                break;
-        };
-
-        // 设置计时器
-        if (this.ndCountdown) {
-            var com = this.ndCountdown.getComponent('Countdown');
-            if (com) {
-                com.setCount(30);
-            }
-            switch (st) {
-                case fsm.StateType.ElectCall:
-                case fsm.StateType.ElectGrab:
-                case fsm.StateType.PlaySelf:
-                    this.ndCountdown.active = true;
-                    this.ndCountdown.setPosition(this.ndCountdownPts[0]);
-                    break;
-                case fsm.StateType.ElectNext:
-                case fsm.StateType.PlayNext:
-                    this.ndCountdown.active = true;
-                    this.ndCountdown.setPosition(this.ndCountdownPts[1]);
-                    break;
-                case fsm.StateType.ElectPrev:
-                case fsm.StateType.PlayPrev:
-                    this.ndCountdown.active = true;
-                    this.ndCountdown.setPosition(this.ndCountdownPts[2]);
-                    break;
-                default :
-                    this.ndCountdown.active = false;
-                    break; 
-            }
-        }
-    },
-
     showOutputCards: function (arrCards, index) {
         this.ndCardStacks.forEach((cardstack, i) => {
             var component = cardstack.getComponent('CardStack');
-            console.log(component);
             if (index === i ) {
                 component.resetCards(arrCards);
             } else {
@@ -119,11 +74,9 @@ cc.Class({
     },
 
     onBtnElectionCancel: function () {
-        fsm.changeState(fsm.StateEvent.ElectPass);
     },
 
     onBtnElectionComfirm: function () {
-        fsm.changeState(fsm.StateEvent.ElectPass);
     },
 
     onBtnRaiseCancel: function () {

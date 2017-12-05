@@ -4812,7 +4812,7 @@
       }
     ],
     "_tag": -1,
-    "_active": true,
+    "_active": false,
     "_components": [
       {
         "__id__": 133
@@ -5247,10 +5247,7 @@
         "x": 120,
         "y": 160
       }
-    ],
-    "ndPokerData": {
-      "__id__": 27
-    }
+    ]
   },
   {
     "__type__": "cc.Node",
@@ -5963,8 +5960,8 @@
     "ndDeal": {
       "__id__": 135
     },
-    "ndPokerData": {
-      "__id__": 27
+    "ndSingleGame": {
+      "__id__": 29
     }
   },
   {

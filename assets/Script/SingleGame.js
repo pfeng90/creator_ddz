@@ -28,17 +28,20 @@ cc.Class({
 
 
         this.node.on(Event.PLAYER_PREPARED, (event) => {
-            this._logic.addPlayer(SingleData.Players[Utils.getRandomInt(0, SingleData.Players.length)]);
+            this.node.emit(Event.ENTER_SEARCH_LIST);
+            setTimeout(() => {
+                this._logic.addPlayer(SingleData.Players[Utils.getRandomInt(0, SingleData.Players.length)]);
+            }, Utils.getRandomInt(1, 6) * 1000);
         });
     },
 
     onGetDealPokers: function (pokerData) {
-        console.log(pokerData);
+        this.node.emit(Event.DEAL_POKERS, pokerData);
     },
 
 
     onElectLorder: function (nPlayerIndex) {
-
+        this.node.emit(Event.CALL_LORDER, nPlayerIndex);
     },
 
     onGrabLorder: function (nPlayerIndex) {

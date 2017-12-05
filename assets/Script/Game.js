@@ -2,7 +2,7 @@ import { setTimeout } from 'timers';
 
 var fsm = require('game-fsm');
 var utils = require('utils');
-var Events = require('event');
+var Event = require('event');
 
 cc.Class({
     extends: cc.Component,
@@ -28,11 +28,18 @@ cc.Class({
         })
 
         fsm.init(this);
+
+        this.ndSingleGame.on(Event.ENTER_SEARCH_LIST, (event) => {
+            fsm.changeState(fsm.StateEvent.Search); 
+        });
+
+        this.ndSingleGame.on(Event.DEAL_POKERS, (event) => {
+            fsm.changeState(fsm.StateEvent.Playing); 
+        });
     },
 
     onBtnPrepareClicked: function () {
-        // fsm.changeState(fsm.StateEvent.Search);
-        this.ndSingleGame.emit(Events.PLAYER_PREPARED);
+        this.ndSingleGame.emit(Event.PLAYER_PREPARED);
     },
 
     onBtnContinueClicked: function () {
@@ -54,18 +61,11 @@ cc.Class({
                 this.ndPanelSearch.active = true;
                 this.ndPanelResult.active = false;
                 this.ndPanelPrepare.active = false;
-                setTimeout(() => {
-                    fsm.changeState(fsm.StateEvent.Playing);
-                }, 3000);
                 break;
             case fsm.StateType.Playing:
                 this.ndPanelSearch.active = false;
                 this.ndPanelResult.active = false;
                 this.ndPanelPrepare.active = false;
-
-                // setTimeout(() => {
-                //     fsm.changeState(fsm.StateEvent.Settled);
-                // }, utils.getRandomInt(3000, 12000));
                 break;
             case fsm.StateType.Settled:
                 this.ndPanelSearch.active = false;
@@ -78,9 +78,4 @@ cc.Class({
 
         this.ndPanelPlaying.active = st === fsm.StateType.Playing;
     },
-
-    // called every frame, uncomment this function to activate update callback
-    // update: function (dt) {
-
-    // },
 });

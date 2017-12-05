@@ -62,8 +62,8 @@ class SingleLogic {
         deal.entry ( () => {
             this.arrPokers = Pokers.randomPokers();
             let nLorderIndex = Utils.getRandomInt(0, this.arrPokers.length - Pokers.KeyCount);
-            this.nLorderIndex = Math.floor(nLorderIndex / PLAYER_MAX_COUNT);
             let nEachCount = (Pokers.Count - Pokers.KeyCount) / PLAYER_MAX_COUNT;
+            this.nLorderIndex = Math.floor(nLorderIndex / nEachCount);
             let nLorderPos = (nLorderIndex % nEachCount) * PLAYER_MAX_COUNT + this.nLorderIndex;
             this.delegate.onGetDealPokers({
                 handPokers : this.arrPokers.slice(0, nEachCount),

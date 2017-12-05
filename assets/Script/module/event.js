@@ -16,4 +16,13 @@ module.exports = {
 
     // 玩家准备
     PLAYER_PREPARED : 'PLAYER_PREPARED',
+
+    // 进入等待队列
+    ENTER_SEARCH_LIST : 'ENTER_SEARCH_LIST',
+
+    // 发牌信息
+    DEAL_POKERS : 'DEAL_POKERS',
+
+    // 叫地主
+    CALL_LORDER : 'CALL_LORDER',
 };
