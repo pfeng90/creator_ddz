@@ -6,6 +6,7 @@ cc.Class({
     properties: {
         ndCountdown : cc.Node,
         ndCountdownPts : [cc.Vec2],
+        lbStates : [cc.Label],
         ndCardStacks : [cc.Node],
         ndElectionCall : cc.Node,
         ndElectionGrab : cc.Node,
@@ -13,13 +14,19 @@ cc.Class({
         ndNextLeftCount : cc.Node,
         ndPlayerCardStack : cc.Node,
         ndDeal : cc.Node,
+        ndRaise : cc.Node,
         ndSingleGame: cc.Node,
     },
 
     // use this for initialization
     onLoad: function () {
         this.ndElectionCall.active = false;
-        this.ndElectionGrab.active = false; 
+        this.ndElectionGrab.active = false;
+        this.ndRaise.active = false;
+
+        this.lbStates.forEach((lb) => {
+            lb.string = '';
+        });
 
         this.ndSingleGame.on(Event.DEAL_POKERS, (event) => {
             var comDeal = this.ndDeal.getComponent('Deal');
@@ -33,9 +40,25 @@ cc.Class({
             var playerIndex = event.detail;
             this.ndCountdown.active = true;
             this.ndCountdown.setPosition(this.ndCountdownPts[playerIndex]);
-            if (playerIndex == 0) {
-                this.ndElectionCall.active = true;
-            }
+            this.ndElectionCall.active = playerIndex == 0;
+        });
+
+        this.ndSingleGame.on(Event.GRAB_LORDER, (event) => {
+            this.ndElectionCall.active = false;
+            var playerIndex = event.detail;
+            this.ndCountdown.active = true;
+            this.ndCountdown.setPosition(this.ndCountdownPts[playerIndex]);
+            this.ndElectionGrab.active = playerIndex == 0;
+        });
+
+        this.ndSingleGame.on(Event.STATE_SYNC, (event) => {
+            var playerIndex = event.detail.index;
+            this.lbStates[playerIndex].string = event.detail.state;
+        });
+
+        this.ndSingleGame.on(Event.S2C_RAISE_BET, (event) => {
+            this.ndElectionGrab.active = false;
+            this.ndRaise.active = true;
         });
 
         this.node.on(Event.DEAL_BEGIN, event => {
@@ -74,9 +97,31 @@ cc.Class({
     },
 
     onBtnElectionCancel: function () {
+        this.ndSingleGame.emit(Event.C2S_CALL_LORDER, {
+            playerIndex: 0,
+            bElected: false
+        })
     },
 
     onBtnElectionComfirm: function () {
+        this.ndSingleGame.emit(Event.C2S_CALL_LORDER, {
+            playerIndex: 0,
+            bElected: true
+        })
+    },
+
+    onBtnGrabCancel: function () {
+        this.ndSingleGame.emit(Event.C2S_GRAB_LORDER, {
+            playerIndex: 0,
+            bGrabed: false
+        })
+    },
+
+    onBtnGrabComfirm: function () {
+        this.ndSingleGame.emit(Event.C2S_GRAB_LORDER, {
+            playerIndex: 0,
+            bGrabed: true
+        })
     },
 
     onBtnRaiseCancel: function () {

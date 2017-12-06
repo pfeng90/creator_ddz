@@ -50,6 +50,7 @@ class SingleLogic {
         elect.to(grab).when(on(SingleLogic.StateEvent.Next));
         elect.to(raise).when(on(SingleLogic.StateEvent.Raise));
         elect.to(deal).when(on(SingleLogic.StateEvent.ReDeal));
+        grab.to(grab).when(on(SingleLogic.StateEvent.Turn));
         grab.to(raise).when(on(SingleLogic.StateEvent.Next));
         raise.to(play).when(on(SingleLogic.StateEvent.Next));
         play.to(play).when(on(SingleLogic.StateEvent.Turn));
@@ -155,8 +156,10 @@ class SingleLogic {
                 this._evaluate(SingleLogic.StateEvent.Turn);
             }
         } else {
-            // 全部抢地主,最后一人获的地主
-            if (this.nRound === PLAYER_MAX_COUNT) {
+            if (this.nRound > PLAYER_MAX_COUNT) {
+                this._evaluate(SingleLogic.StateEvent.Next); 
+            } else if (this.nRound === PLAYER_MAX_COUNT) {
+                // 全部抢地主,最后一人获的地主
                 if (this.arrPreLorder.length > 1) {
                     this._evaluate(SingleLogic.StateEvent.Turn);
                 }

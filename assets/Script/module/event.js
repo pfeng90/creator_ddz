@@ -25,4 +25,19 @@ module.exports = {
 
     // 叫地主
     CALL_LORDER : 'CALL_LORDER',
+
+    // 叫地主
+    C2S_CALL_LORDER: 'C2S_CALL_LORDER',
+
+    // 抢地主
+    GRAB_LORDER : 'GRAB_LORDER',
+
+    // 抢地主
+    C2S_GRAB_LORDER : 'C2S_GRAB_LORDER',
+
+    // 状态同步
+    STATE_SYNC : 'STATE_SYNC',
+
+    // 加倍
+    S2C_RAISE_BET : 'S2C_RAISE_BET',
 };
