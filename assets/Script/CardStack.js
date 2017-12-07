@@ -23,6 +23,7 @@ cc.Class({
         _arrCards: [],
         _arrCardNodes: [cc.Node],
         _nShowCount: 0,
+        _arrSelectedCardData: [],
     },
 
     _display: function (bHide) {
@@ -107,7 +108,11 @@ cc.Class({
             card.componet = cardCom;
             card.selectOrNot = () => {
                 card.y = card.y != 0 ? 0 : this.nJumpHeight;
+                return card.y != 0;
             };
+            card.getValue = () => {
+                return cardData;
+            }
 
             this._arrCardNodes.push(card);
 
@@ -160,7 +165,9 @@ cc.Class({
     resetCards: function (arrCards) {
         this.clearCards();
         this._arrCards =  arrCards;
-        this._display();
+        if (this._arrCards.length > 0) {
+            this._display();
+        }
     },
 
     clearCards: function () {
@@ -190,10 +197,13 @@ cc.Class({
         }
 
         let arrSelectedCard = [];
-        let _clearSelectedCards = bEffect => {
+        let _clearSelectedCards = (bEffect) => {
+            this._arrSelectedCardData = [];
             arrSelectedCard.forEach(card => {
                 if (bEffect === true) {
-                    card.selectOrNot();
+                    if (card.selectOrNot()) {
+                        this._arrSelectedCardData.push(card.getValue());
+                    }
                 }
                 card.componet.setSelected(false);
             })
@@ -234,6 +244,10 @@ cc.Class({
         this.node.on('touchcancel', event => {
             _clearSelectedCards();
         })
+    },
+
+    getSelectDate: function () {
+        return this._arrSelectedCardData;
     },
 
     // called every frame, uncomment this function to activate update callback

@@ -18,6 +18,7 @@ cc.Class({
         // },
         // ...
         _logic : null,
+        _arrPokerSets : null,
     },
 
     // use this for initialization
@@ -51,10 +52,28 @@ cc.Class({
                 state: stateStr,
             });
         });
+
+        this.node.on(Event.C2S_RAISE_BET, (event) => {
+            this._logic.raiseBet(event.detail.playerIndex, event.detail.nMultiple);
+        });
+
+        this.node.on(Event.C2S_PLAYER_HANDLE, (event) => {
+            this._logic.playPokers(event.detail.playerIndex, event.detail.arrPokers);
+            console.log(event.detail);
+            this.node.emit(Event.S2C_TABLE_SYNC, {
+                index: event.detail.playerIndex,
+                data: event.detail.data,
+            });
+        });
     },
 
     onGetDealPokers: function (pokerData) {
-        this.node.emit(Event.DEAL_POKERS, pokerData);
+        this._arrPokerSets = null;
+        this._arrPokerSets = pokerData.handPokers;
+        let pd = {};
+        pd.handPokers = pokerData.handPokers[0];
+        pd.lorderPoker = pokerData.lorderPoker;
+        this.node.emit(Event.DEAL_POKERS, pd);
     },
 
 
@@ -93,7 +112,19 @@ cc.Class({
     },
 
     onPlayerHandle: function (nPlayerIndex) {
-
+        this.node.emit(Event.S2C_PLAYER_HANDLE, nPlayerIndex);
+        if (nPlayerIndex !== 0) {
+            this.scheduleOnce(() => {
+                var arrPokers = [];
+                var pokerSet = this._arrPokerSets[nPlayerIndex];
+                arrPokers.push(pokerSet.pop());
+                this._logic.playPokers(nPlayerIndex, arrPokers);
+                this.node.emit(Event.S2C_TABLE_SYNC, {
+                    index: nPlayerIndex,
+                    data: arrPokers,
+                });
+            }, Utils.getRandomInt(2, 5)); 
+        }
     }
 
     // called every frame, uncomment this function to activate update callback

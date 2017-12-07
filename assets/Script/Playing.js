@@ -10,6 +10,7 @@ cc.Class({
         ndCardStacks : [cc.Node],
         ndElectionCall : cc.Node,
         ndElectionGrab : cc.Node,
+        ndPlayerHandle : cc.Node,
         ndLastLeftCount : cc.Node,
         ndNextLeftCount : cc.Node,
         ndPlayerCardStack : cc.Node,
@@ -20,15 +21,21 @@ cc.Class({
 
     // use this for initialization
     onLoad: function () {
-        this.ndElectionCall.active = false;
-        this.ndElectionGrab.active = false;
-        this.ndRaise.active = false;
+        var clearState = () => {
+            this.ndElectionCall.active = false;
+            this.ndElectionGrab.active = false;
+            this.ndRaise.active = false;
+    
+            this.lbStates.forEach((lb) => {
+                lb.string = '';
+            });
+        };
 
-        this.lbStates.forEach((lb) => {
-            lb.string = '';
-        });
+        clearState();
 
         this.ndSingleGame.on(Event.DEAL_POKERS, (event) => {
+            clearState();
+
             var comDeal = this.ndDeal.getComponent('Deal');
             comDeal.deal(event.detail.lorderPoker);
 
@@ -59,6 +66,26 @@ cc.Class({
         this.ndSingleGame.on(Event.S2C_RAISE_BET, (event) => {
             this.ndElectionGrab.active = false;
             this.ndRaise.active = true;
+            this.ndCountdown.setPosition(this.ndCountdownPts[0]);
+            var com = this.ndPlayerCardStack.getComponent('CardStack');
+            com.setTouchEventEnable();
+        });
+
+        this.ndSingleGame.on(Event.S2C_PLAYER_HANDLE, (event) => {
+            clearState();
+            if (this.ndCountdownPts[event.detail]) {
+                this.ndCountdown.setPosition(this.ndCountdownPts[event.detail]);
+            }
+            this.ndPlayerHandle.active = event.detail == 0;
+        });
+
+        this.ndSingleGame.on(Event.S2C_TABLE_SYNC, (event) => {
+            var cs = this.ndCardStacks[event.detail.index] 
+            if (cs) {
+                var arrPokers = event.detail.data;
+                var com = cs.getComponent('CardStack');
+                com.resetCards(arrPokers);
+            }
         });
 
         this.node.on(Event.DEAL_BEGIN, event => {
@@ -125,15 +152,41 @@ cc.Class({
     },
 
     onBtnRaiseCancel: function () {
-
+        this.ndSingleGame.emit(Event.C2S_RAISE_BET, {
+            playerIndex: 0,
+            nMultiple: 0
+        })
     },
 
     onBtnRaiseDouble: function () {
-
+        this.ndSingleGame.emit(Event.C2S_RAISE_BET, {
+            playerIndex: 0,
+            nMultiple: 2
+        })
     },
 
     onBtnRaiseSuper: function () {
+        this.ndSingleGame.emit(Event.C2S_RAISE_BET, {
+            playerIndex: 0,
+            nMultiple: 4
+        })
+    },
 
+    onBtnFold: function () {
+        this.ndSingleGame.emit(Event.C2S_PLAYER_HANDLE, {
+            playerIndex: 0,
+            data: [],
+        })
+    },
+
+    onBtnOutput: function () {
+        var com = this.ndPlayerCardStack.getComponent('CardStack');
+        var selectData = com.getSelectDate();
+        console.log(selectData);
+        this.ndSingleGame.emit(Event.C2S_PLAYER_HANDLE, {
+            playerIndex: 0,
+            data: selectData,
+        })
     },
 
     // called every frame, uncomment this function to activate update callback

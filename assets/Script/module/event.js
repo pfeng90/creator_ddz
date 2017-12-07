@@ -40,4 +40,12 @@ module.exports = {
 
     // 加倍
     S2C_RAISE_BET : 'S2C_RAISE_BET',
+    C2S_RAISE_BET : 'C2S_RAISE_BET',
+
+    // 玩家操作
+    S2C_PLAYER_HANDLE : 'S2C_PLAYER_HANDLE',
+    C2S_PLAYER_HANDLE : 'C2S_PLAYER_HANDLE',
+
+    // 牌局同步
+    S2C_TABLE_SYNC : 'S2C_TABLE_SYNC',
 };

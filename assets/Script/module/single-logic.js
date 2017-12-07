@@ -25,6 +25,8 @@ class SingleLogic {
         this.nRound = 0;
         // 出牌序列
         this.nTurnIndex = 0;
+        // 加倍个数
+        this.nRaiseCount = 0;
         this._initState();
     }
 
@@ -66,8 +68,12 @@ class SingleLogic {
             let nEachCount = (Pokers.Count - Pokers.KeyCount) / PLAYER_MAX_COUNT;
             this.nLorderIndex = Math.floor(nLorderIndex / nEachCount);
             let nLorderPos = (nLorderIndex % nEachCount) * PLAYER_MAX_COUNT + this.nLorderIndex;
+            let arrPokerSets = [];
+            for (let i = 0; i < PLAYER_MAX_COUNT ; i++) {
+                arrPokerSets.push(this.arrPokers.slice(i * nEachCount, (i + 1) * nEachCount));
+            }
             this.delegate.onGetDealPokers({
-                handPokers : this.arrPokers.slice(0, nEachCount),
+                handPokers : arrPokerSets,
                 lorderPoker : {
                     poker: this.arrPokers[nLorderIndex],
                     index: nLorderPos,
@@ -90,6 +96,7 @@ class SingleLogic {
 
         raise.entry( () => {
             this.nTurnIndex = this.arrPreLorder.pop();
+            this.nRaiseCount = 0;
             this.delegate.onRaiseState();
         });
 
@@ -172,8 +179,11 @@ class SingleLogic {
         }
     }
 
-    raiseBet(nPlayerIndex, bRaise) {
-        this._evaluate(SingleLogic.StateEvent.Next);
+    raiseBet(nPlayerIndex, nMultiple) {
+        this.nRaiseCount++;
+        // if (this.nRaiseCount == PLAYER_MAX_COUNT) {
+            this._evaluate(SingleLogic.StateEvent.Next);
+        // }
     }
 
     playPokers(nPlayerIndex, arrPokers) {
