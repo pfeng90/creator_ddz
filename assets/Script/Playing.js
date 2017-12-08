@@ -80,11 +80,17 @@ cc.Class({
         });
 
         this.ndSingleGame.on(Event.S2C_TABLE_SYNC, (event) => {
-            var cs = this.ndCardStacks[event.detail.index] 
+            var arrPokers = event.detail.data;
+            var nPlayerIndex =event.detail.index;
+            var cs = this.ndCardStacks[nPlayerIndex] 
             if (cs) {
-                var arrPokers = event.detail.data;
                 var com = cs.getComponent('CardStack');
                 com.resetCards(arrPokers);
+            }
+
+            if (nPlayerIndex == 0) {
+                var comCard = this.ndPlayerCardStack.getComponent('CardStack');
+                comCard.removeCards(arrPokers); 
             }
         });
 
@@ -182,7 +188,6 @@ cc.Class({
     onBtnOutput: function () {
         var com = this.ndPlayerCardStack.getComponent('CardStack');
         var selectData = com.getSelectDate();
-        console.log(selectData);
         this.ndSingleGame.emit(Event.C2S_PLAYER_HANDLE, {
             playerIndex: 0,
             data: selectData,

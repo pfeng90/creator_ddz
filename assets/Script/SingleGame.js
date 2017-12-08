@@ -59,7 +59,6 @@ cc.Class({
 
         this.node.on(Event.C2S_PLAYER_HANDLE, (event) => {
             this._logic.playPokers(event.detail.playerIndex, event.detail.arrPokers);
-            console.log(event.detail);
             this.node.emit(Event.S2C_TABLE_SYNC, {
                 index: event.detail.playerIndex,
                 data: event.detail.data,

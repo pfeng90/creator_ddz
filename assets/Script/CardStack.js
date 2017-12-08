@@ -125,6 +125,13 @@ cc.Class({
         this.node.height = cardSize.height + this.nJumpHeight;
     },
 
+    _distoryCardNodes: function () {
+        this._arrCardNodes.forEach(cardnode => {
+            cardnode.destroy();
+        });
+        this._arrCardNodes = [];
+    },
+
     // use this for initialization
     onLoad: function () {
     },
@@ -172,10 +179,15 @@ cc.Class({
 
     clearCards: function () {
         this._arrCards = [];
-        this._arrCardNodes.forEach(cardnode => {
-            cardnode.destroy();
-        });
-        this._arrCardNodes = [];
+        this._distoryCardNodes();
+    },
+
+    removeCards: function (arrCards) {
+        if (arrCards.length > 0 ) {
+            this._distoryCardNodes();
+            this._arrCards = this._arrCards.filter(card => !arrCards.includes(card));
+            this._display();
+        }
     },
 
     getAllCardNodes: function () {
