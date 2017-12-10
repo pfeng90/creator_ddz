@@ -94,6 +94,11 @@ cc.Class({
             }
         });
 
+        this.ndSingleGame.on(Event.S2C_GAME_END, (event) => {
+            this.ndPlayerHandle.active = false;
+            console.log('Game End');
+        });
+
         this.node.on(Event.DEAL_BEGIN, event => {
         });
 

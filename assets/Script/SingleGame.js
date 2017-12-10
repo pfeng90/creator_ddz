@@ -58,7 +58,7 @@ cc.Class({
         });
 
         this.node.on(Event.C2S_PLAYER_HANDLE, (event) => {
-            this._logic.playPokers(event.detail.playerIndex, event.detail.arrPokers);
+            this._logic.playPokers(event.detail.playerIndex, event.detail.data);
             this.node.emit(Event.S2C_TABLE_SYNC, {
                 index: event.detail.playerIndex,
                 data: event.detail.data,
@@ -124,7 +124,11 @@ cc.Class({
                 });
             }, Utils.getRandomInt(2, 5)); 
         }
-    }
+    },
+
+    onGameEnd: function () {
+        this.node.emit(Event.S2C_GAME_END); 
+    },
 
     // called every frame, uncomment this function to activate update callback
     // update: function (dt) {

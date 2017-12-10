@@ -48,4 +48,7 @@ module.exports = {
 
     // 牌局同步
     S2C_TABLE_SYNC : 'S2C_TABLE_SYNC',
+
+    // 牌局结束
+    S2C_GAME_END : 'S2C_GAME_END',
 };

@@ -16,7 +16,7 @@ class SingleLogic {
         this.model = null;
         this.instance = null;
         this.arrPlayers = [];
-        this.arrPokers = [];
+        this.arrPokerSets = [];
         // 决定地主的牌
         this.nLorderIndex = 0;
         // 叫地主的玩家列表
@@ -63,19 +63,19 @@ class SingleLogic {
         });
 
         deal.entry ( () => {
-            this.arrPokers = Pokers.randomPokers();
-            let nLorderIndex = Utils.getRandomInt(0, this.arrPokers.length - Pokers.KeyCount);
+            let arrPokers = Pokers.randomPokers();
+            let nLorderIndex = Utils.getRandomInt(0, arrPokers.length - Pokers.KeyCount);
             let nEachCount = (Pokers.Count - Pokers.KeyCount) / PLAYER_MAX_COUNT;
             this.nLorderIndex = Math.floor(nLorderIndex / nEachCount);
             let nLorderPos = (nLorderIndex % nEachCount) * PLAYER_MAX_COUNT + this.nLorderIndex;
-            let arrPokerSets = [];
+            this.arrPokerSets = [];
             for (let i = 0; i < PLAYER_MAX_COUNT ; i++) {
-                arrPokerSets.push(this.arrPokers.slice(i * nEachCount, (i + 1) * nEachCount));
+                this.arrPokerSets.push(arrPokers.slice(i * nEachCount, (i + 1) * nEachCount));
             }
             this.delegate.onGetDealPokers({
-                handPokers : arrPokerSets,
+                handPokers : this.arrPokerSets,
                 lorderPoker : {
-                    poker: this.arrPokers[nLorderIndex],
+                    poker: arrPokers[nLorderIndex],
                     index: nLorderPos,
                 }
             });
@@ -102,6 +102,10 @@ class SingleLogic {
 
         play.entry( () => {
             this.delegate.onPlayerHandle(this.nTurnIndex);
+        });
+
+        end.entry( () => {
+            this.delegate.onGameEnd();
         });
 
         // create a State machine instance
@@ -187,9 +191,18 @@ class SingleLogic {
     }
 
     playPokers(nPlayerIndex, arrPokers) {
-        this.nTurnIndex = (this.nTurnIndex + 1) % PLAYER_MAX_COUNT;
-        this._evaluate(SingleLogic.StateEvent.Turn);
-    }
+        let arrPokerSet = this.arrPokerSets[nPlayerIndex];
+        if (arrPokerSet) {
+            arrPokerSet = arrPokerSet.filter(poker => !arrPokers.includes(poker));
+            this.arrPokerSets[nPlayerIndex] = arrPokerSet;
+            if (arrPokerSet.length === 0) {
+                this._evaluate(SingleLogic.StateEvent.Next);
+            } else {
+                this.nTurnIndex = (this.nTurnIndex + 1) % PLAYER_MAX_COUNT;
+                this._evaluate(SingleLogic.StateEvent.Turn);
+            }
+        }
+   }
 }
 
 SingleLogic.StateType = {
