@@ -108,7 +108,6 @@ cc.Class({
             card.componet = cardCom;
             card.selectOrNot = () => {
                 card.y = card.y != 0 ? 0 : this.nJumpHeight;
-                return card.y != 0;
             };
             card.getValue = () => {
                 return cardData;
@@ -213,9 +212,7 @@ cc.Class({
             this._arrSelectedCardData = [];
             arrSelectedCard.forEach(card => {
                 if (bEffect === true) {
-                    if (card.selectOrNot()) {
-                        this._arrSelectedCardData.push(card.getValue());
-                    }
+                    card.selectOrNot();
                 }
                 card.componet.setSelected(false);
             })
@@ -258,8 +255,14 @@ cc.Class({
         })
     },
 
-    getSelectDate: function () {
-        return this._arrSelectedCardData;
+    getSelectData: function () {
+        let arrSelectData = [];
+        this._arrCardNodes.forEach(cardnode => {
+            if (cardnode.y > 0) {
+                arrSelectData.push(cardnode.getValue());
+            }
+        })
+        return arrSelectData;
     },
 
     // called every frame, uncomment this function to activate update callback

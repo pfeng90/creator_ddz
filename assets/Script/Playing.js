@@ -192,7 +192,7 @@ cc.Class({
 
     onBtnOutput: function () {
         var com = this.ndPlayerCardStack.getComponent('CardStack');
-        var selectData = com.getSelectDate();
+        var selectData = com.getSelectData();
         this.ndSingleGame.emit(Event.C2S_PLAYER_HANDLE, {
             playerIndex: 0,
             data: selectData,
