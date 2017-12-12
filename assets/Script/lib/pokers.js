@@ -41,6 +41,42 @@ module.exports = {
 
     KeyCount: 3,
 
+    OutType: {
+        Error: 0,
+        Single: 1,
+        Pair: 2,
+        Three: 3,
+        ThreeWithOne: 4,
+        ThreeWithPair: 5,
+        Straight: 6,
+        Plane: 7,
+        PlaneWithPairs: 8,
+        FourWithTwo: 9,
+        FourWithPairs: 10,
+        Straight: 11,
+        StraightPairs: 12,
+        StraightThree: 13,
+        Bomb: 100,
+        Rocket: 101,
+    },
+
+    CountMapType: [
+        [OutType.Error],
+        [OutType.Single],
+        [OutType.Pair, OutType.Rocket],
+        [OutType.Three],
+        [OutType.ThreeWithOne, OutType.Bomb],
+        [OutType.ThreeWithPair, OutType.Straight],
+        [OutType.FourWithTwo, OutType.StraightPairs, OutType.Straight],
+        [OutType.Straight],
+        [OutType.Plane, OutType.StraightPairs, OutType.Straight],
+        [OutType.StraightThree, OutType.Straight],
+        [OutType.PlaneWithPairs, OutType.StraightPairs, OutType.Straight],
+        [OutType.Straight],
+        [OutType.StraightThree, OutType.StraightPairs, OutType.Straight],
+        [OutType.Straight],
+    ],
+
     randomPokers: function () {
         var arrIndex = [];
         for (var i = 0; i < 54; i++) {
@@ -66,5 +102,34 @@ module.exports = {
 
         return pokers;
 
+    },
+
+    sortPokers: function (arrPokers) {
+        return arrPokers.sort((a, b) => {
+            return a.point > b.point;
+        });
+    },
+
+    getOutputType: function (arrPokers) {
+        var sortPokers = this.sortPokers(arrPokers);
+        var suspectedType = this.OutType[sortPokers.length];
+        for (var i = 0; i < suspectedType.length; i++) {
+            var sType = suspectedType[i];
+            switch (sType) {
+                case OutType.Error:
+                    return OutType.Error;
+                    break;
+                case OutType.Single:
+                    return OutType.Single;
+                    break;
+                case OutType.Pair:
+                    if (sortPokers[0].point === sortPokers[1].point) {
+                        return OutType.Pair;
+                    } else {
+                        return OutType.Error;
+                    }
+                    break;
+            }
+        }
     },
 };
