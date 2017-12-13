@@ -191,6 +191,8 @@ class SingleLogic {
     }
 
     playPokers(nPlayerIndex, arrPokers) {
+        let outType = Pokers.getOutputType(arrPokers);
+        console.log(outType);
         let arrPokerSet = this.arrPokerSets[nPlayerIndex];
         if (arrPokerSet) {
             arrPokerSet = arrPokerSet.filter(poker => !arrPokers.includes(poker));

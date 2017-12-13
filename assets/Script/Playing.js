@@ -1,4 +1,5 @@
 var Event = require('event');
+var Pokers = require('pokers');
 
 cc.Class({
     extends: cc.Component,
@@ -193,10 +194,16 @@ cc.Class({
     onBtnOutput: function () {
         var com = this.ndPlayerCardStack.getComponent('CardStack');
         var selectData = com.getSelectData();
-        this.ndSingleGame.emit(Event.C2S_PLAYER_HANDLE, {
-            playerIndex: 0,
-            data: selectData,
-        })
+        console.log(selectData);
+        if (Pokers.getOutputType(selectData) !== Pokers.OutType.Error) {
+            this.ndSingleGame.emit(Event.C2S_PLAYER_HANDLE, {
+                playerIndex: 0,
+                data: selectData,
+            });
+        } else {
+            console.log('wrong type');
+        }
+        
     },
 
     // called every frame, uncomment this function to activate update callback

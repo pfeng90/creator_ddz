@@ -60,23 +60,6 @@ module.exports = {
         Rocket: 101,
     },
 
-    CountMapType: [
-        [OutType.Error],
-        [OutType.Single],
-        [OutType.Pair, OutType.Rocket],
-        [OutType.Three],
-        [OutType.ThreeWithOne, OutType.Bomb],
-        [OutType.ThreeWithPair, OutType.Straight],
-        [OutType.FourWithTwo, OutType.StraightPairs, OutType.Straight],
-        [OutType.Straight],
-        [OutType.Plane, OutType.StraightPairs, OutType.Straight],
-        [OutType.StraightThree, OutType.Straight],
-        [OutType.PlaneWithPairs, OutType.StraightPairs, OutType.Straight],
-        [OutType.Straight],
-        [OutType.StraightThree, OutType.StraightPairs, OutType.Straight],
-        [OutType.Straight],
-    ],
-
     randomPokers: function () {
         var arrIndex = [];
         for (var i = 0; i < 54; i++) {
@@ -111,25 +94,150 @@ module.exports = {
     },
 
     getOutputType: function (arrPokers) {
-        var sortPokers = this.sortPokers(arrPokers);
-        var suspectedType = this.OutType[sortPokers.length];
+        if (arrPokers.length < 1) {
+            return this.OutType.Error;
+        }
+        var sortedPokers = this.sortPokers(arrPokers);
+        console.log(sortedPokers);
+        var setType = {
+            Single : 0,
+            Pair : 1,
+            Triple: 2,
+            Quadruple: 3,
+        }
+        var arrSets = [
+            [], // 单牌
+            [], // 对子
+            [], // 三条
+            [], // 四条
+        ];
+        var fSetContinue = function (s) {
+            return (s[s.length - 1] - s[0] + 1) === s.length;
+        }
+        var count = 0;
+        var lastPoint = null;
+        var lastIndex = sortedPokers.length - 1;
+        sortedPokers.forEach((poker, index) => {
+            if (lastPoint) {
+                if (lastPoint === poker.point) {
+                    count++;
+                } else {
+                    arrSets[count].push(lastPoint);
+                    count = 0;
+                }
+            }
+            lastPoint = poker.point;
+            if (index === lastIndex) {
+                arrSets[count].push(poker.point);
+            }
+        });
+        for(var i = arrSets.length - 1; i >= 0; i--) {
+            var s = arrSets[i];
+            if (s.length === sortedPokers.length /  (i + 1)) {
+                switch(i) {
+                    case setType.Single:
+                        if (s.length === 1) {
+                            return this.OutType.Single;
+                        } else if (fSetContinue(s)) {
+                            return this.OutType.Straight;
+                        } else {
+                            return this.OutType.Error;
+                        }
+                        break;
+                    case setType.Pair:
+                        if (s.length === 1) {
+                            return this.OutType.Pair;
+                        } else if (s.length === 2) {
+                            return this.OutType.Error;
+                        } else if (fSetContinue(s)) {
+                            return this.OutType.StraightPairs;
+                        } else {
+                            return this.OutType.Error;
+                        }
+                        break;
+                    case setType.Triple:
+                        if (s.length === 1) {
+                            return this.OutType.Three;
+                        } else if (s.length === 2) {
+                            return this.OutType.Plane;
+                        } else if (fSetContinue(s)) {
+                            return this.OutType.StraightThree;
+                        } else {
+                            return this.OutType.Error;
+                        }
+                        break;
+                    case setType.Quadruple:
+                        if (s.length === 1) {
+                            return this.OutType.Bomb;
+                        } else {
+                            return this.OutType.Error;
+                        }
+                        break;
+                }
+            }
+        }
+
+        var countMapType = [
+            [],
+            [],
+            [this.OutType.Rocket],
+            [],
+            [this.OutType.ThreeWithOne],
+            [this.OutType.ThreeWithPair],
+            [this.OutType.FourWithTwo],
+            [],
+            [this.OutType.Plane],
+            [],
+            [this.OutType.PlaneWithPairs],
+            [],
+            [],
+            [],
+        ];
+
+        var suspectedType = countMapType[sortedPokers.length];
         for (var i = 0; i < suspectedType.length; i++) {
             var sType = suspectedType[i];
             switch (sType) {
-                case OutType.Error:
-                    return OutType.Error;
+                case this.OutType.Rocket:
+                    if (sortedPokers[0].point > this.Point.Two) {
+                        return this.OutType.Rocket;
+                    }
                     break;
-                case OutType.Single:
-                    return OutType.Single;
+                case this.OutType.ThreeWithOne:
+                    if (arrSets[setType.Triple].length === 1 &&
+                        arrSets[setType.Single].length === 1) {
+                        return this.OutType.ThreeWithOne;
+                    }
                     break;
-                case OutType.Pair:
-                    if (sortPokers[0].point === sortPokers[1].point) {
-                        return OutType.Pair;
-                    } else {
-                        return OutType.Error;
+                case this.OutType.ThreeWithPair:
+                    if (arrSets[setType.Triple].length === 1 &&
+                        arrSets[setType.Pair].length === 1) {
+                        return this.OutType.ThreeWithPair;
+                    }
+                    break;
+                case this.OutType.FourWithTwo:
+                    if (arrSets[setType.Quadruple].length === 1 &&
+                        arrSets[setType.Single].length === 2) {
+                        return this.OutType.ThreeWithPair;
+                    }
+                    break;
+                case this.OutType.Plane:
+                    if (arrSets[setType.Triple].length === 2 &&
+                        fSetContinue(arrSets[setType.Triple]) &&
+                        arrSets[setType.Single].length === 2) {
+                        return this.OutType.Plane;
+                    }
+                    break;
+                case this.OutType.PlaneWithPairs:
+                    if (arrSets[setType.Triple].length === 2 &&
+                        fSetContinue(arrSets[setType.Triple]) &&
+                        arrSets[setType.Pair].length === 2) {
+                        return this.OutType.Plane;
                     }
                     break;
             }
         }
+
+        return this.OutType.Error;
     },
 };
