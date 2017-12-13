@@ -194,7 +194,6 @@ cc.Class({
     onBtnOutput: function () {
         var com = this.ndPlayerCardStack.getComponent('CardStack');
         var selectData = com.getSelectData();
-        console.log(selectData);
         if (Pokers.getOutputType(selectData) !== Pokers.OutType.Error) {
             this.ndSingleGame.emit(Event.C2S_PLAYER_HANDLE, {
                 playerIndex: 0,

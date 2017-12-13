@@ -98,7 +98,6 @@ module.exports = {
             return this.OutType.Error;
         }
         var sortedPokers = this.sortPokers(arrPokers);
-        console.log(sortedPokers);
         var setType = {
             Single : 0,
             Pair : 1,
@@ -138,7 +137,12 @@ module.exports = {
                     case setType.Single:
                         if (s.length === 1) {
                             return this.OutType.Single;
-                        } else if (fSetContinue(s)) {
+                        } else if (s.length === 2) {
+                            // 跳过，让下面判断是否为火箭
+                            ;
+                        } else if (s.length > 4 &&
+                                    s[s.length -1] < this.Point.Two && 
+                                    fSetContinue(s)) {
                             return this.OutType.Straight;
                         } else {
                             return this.OutType.Error;
@@ -177,21 +181,29 @@ module.exports = {
             }
         }
 
+        // 牌的数量决定可能的牌型
         var countMapType = [
-            [],
-            [],
-            [this.OutType.Rocket],
-            [],
+            [],                     // 0 张牌
+            [],                     // 1 张牌               
+            [this.OutType.Rocket],  // 2 张牌
+            [],                     // ... 以下类推
             [this.OutType.ThreeWithOne],
             [this.OutType.ThreeWithPair],
             [this.OutType.FourWithTwo],
             [],
-            [this.OutType.Plane],
+            [this.OutType.Plane, this.OutType.FourWithPairs],
             [],
             [this.OutType.PlaneWithPairs],
             [],
+            [this.OutType.Plane],
             [],
             [],
+            [this.OutType.PlaneWithPairs],
+            [this.OutType.Plane],
+            [],
+            [],
+            [],
+            [this.OutType.Plane, this.OutType.PlaneWithPairs],
         ];
 
         var suspectedType = countMapType[sortedPokers.length];
@@ -218,22 +230,30 @@ module.exports = {
                 case this.OutType.FourWithTwo:
                     if (arrSets[setType.Quadruple].length === 1 &&
                         arrSets[setType.Single].length === 2) {
-                        return this.OutType.ThreeWithPair;
+                        return this.OutType.FourWithTwo;
+                    }
+                    break;
+                case this.OutType.FourWithPairs:
+                    if (arrSets[setType.Quadruple].length === 1 &&
+                        arrSets[setType.Pair].length === 2) {
+                        return this.OutType.FourWithPairs;
                     }
                     break;
                 case this.OutType.Plane:
-                    if (arrSets[setType.Triple].length === 2 &&
+                    if (arrSets[setType.Triple].length > 1 &&
                         fSetContinue(arrSets[setType.Triple]) &&
-                        arrSets[setType.Single].length === 2) {
+                        arrSets[setType.Single].length === arrSets[setType.Triple].length) {
                         return this.OutType.Plane;
                     }
                     break;
                 case this.OutType.PlaneWithPairs:
-                    if (arrSets[setType.Triple].length === 2 &&
+                    if (arrSets[setType.Triple].length > 1 &&
                         fSetContinue(arrSets[setType.Triple]) &&
-                        arrSets[setType.Pair].length === 2) {
+                        arrSets[setType.Pair].length === arrSets[setType.Triple].length) {
                         return this.OutType.Plane;
                     }
+                    break;
+                default:
                     break;
             }
         }
