@@ -27,6 +27,8 @@ class SingleLogic {
         this.nTurnIndex = 0;
         // 加倍个数
         this.nRaiseCount = 0;
+        // 上把牌型
+        this.oPokerType = {};
         this._initState();
     }
 
@@ -101,6 +103,7 @@ class SingleLogic {
         });
 
         play.entry( () => {
+            this.oPokerType = {};
             this.delegate.onPlayerHandle(this.nTurnIndex);
         });
 

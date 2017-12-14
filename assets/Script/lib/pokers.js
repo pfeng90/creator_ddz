@@ -95,7 +95,7 @@ module.exports = {
 
     getOutputType: function (arrPokers) {
         if (arrPokers.length < 1) {
-            return this.OutType.Error;
+            return {nType: this.OutType.Error};
         }
         var sortedPokers = this.sortPokers(arrPokers);
         var setType = {
@@ -136,45 +136,53 @@ module.exports = {
                 switch(i) {
                     case setType.Single:
                         if (s.length === 1) {
-                            return this.OutType.Single;
+                            return {nType: this.OutType.Single,
+                                    keyPoker: s.pop()};
                         } else if (s.length === 2) {
                             // 跳过，让下面判断是否为火箭
                             ;
                         } else if (s.length > 4 &&
                                     s[s.length -1] < this.Point.Two && 
                                     fSetContinue(s)) {
-                            return this.OutType.Straight;
+                            return {nType: this.OutType.Straight,
+                                    count: s.length,
+                                    keyPoker: s.pop()};
                         } else {
-                            return this.OutType.Error;
+                            return {nType: this.OutType.Error};
                         }
                         break;
                     case setType.Pair:
                         if (s.length === 1) {
                             return this.OutType.Pair;
                         } else if (s.length === 2) {
-                            return this.OutType.Error;
+                            return {nType: this.OutType.Error};
                         } else if (fSetContinue(s)) {
-                            return this.OutType.StraightPairs;
+                            return {nType: this.OutType.StraightPairs,
+                                count: s.length,
+                                keyPoker: s.pop()};
                         } else {
-                            return this.OutType.Error;
+                            return {nType: this.OutType.Error};
                         }
                         break;
                     case setType.Triple:
                         if (s.length === 1) {
                             return this.OutType.Three;
                         } else if (s.length === 2) {
-                            return this.OutType.Plane;
+                            return {nType: this.OutType.Plane,
+                                keyPoker: s.pop()};
                         } else if (fSetContinue(s)) {
-                            return this.OutType.StraightThree;
+                            return {nType: this.OutType.StraightThree,
+                                count: s.length,
+                                keyPoker: s.pop()};
                         } else {
-                            return this.OutType.Error;
+                            return {nType: this.OutType.Error};
                         }
                         break;
                     case setType.Quadruple:
                         if (s.length === 1) {
                             return this.OutType.Bomb;
                         } else {
-                            return this.OutType.Error;
+                            return {nType: this.OutType.Error};
                         }
                         break;
                 }
@@ -212,45 +220,53 @@ module.exports = {
             switch (sType) {
                 case this.OutType.Rocket:
                     if (sortedPokers[0].point > this.Point.Two) {
-                        return this.OutType.Rocket;
+                        return {nType: this.OutType.Rocket};
                     }
                     break;
                 case this.OutType.ThreeWithOne:
                     if (arrSets[setType.Triple].length === 1 &&
                         arrSets[setType.Single].length === 1) {
-                        return this.OutType.ThreeWithOne;
+                        return {nType: this.OutType.ThreeWithOne,
+                            keyPoker: arrSets[setType.Triple].pop()};
                     }
                     break;
                 case this.OutType.ThreeWithPair:
                     if (arrSets[setType.Triple].length === 1 &&
                         arrSets[setType.Pair].length === 1) {
-                        return this.OutType.ThreeWithPair;
+                        return {nType: this.OutType.ThreeWithPair,
+                            keyPoker: arrSets[setType.Triple].pop()};
                     }
                     break;
                 case this.OutType.FourWithTwo:
                     if (arrSets[setType.Quadruple].length === 1 &&
                         arrSets[setType.Single].length === 2) {
-                        return this.OutType.FourWithTwo;
+                        return {nType: this.OutType.FourWithTwo,
+                            keyPoker: arrSets[setType.Quadruple].pop()};
                     }
                     break;
                 case this.OutType.FourWithPairs:
                     if (arrSets[setType.Quadruple].length === 1 &&
                         arrSets[setType.Pair].length === 2) {
-                        return this.OutType.FourWithPairs;
+                        return {nType: this.OutType.FourWithPairs,
+                            keyPoker: arrSets[setType.Quadruple].pop()};
                     }
                     break;
                 case this.OutType.Plane:
                     if (arrSets[setType.Triple].length > 1 &&
                         fSetContinue(arrSets[setType.Triple]) &&
                         arrSets[setType.Single].length === arrSets[setType.Triple].length) {
-                        return this.OutType.Plane;
+                        return {nType: this.OutType.Plane,
+                            count: arrSets[setType.Triple].length,
+                            keyPoker: arrSets[setType.Triple].pop()};
                     }
                     break;
                 case this.OutType.PlaneWithPairs:
                     if (arrSets[setType.Triple].length > 1 &&
                         fSetContinue(arrSets[setType.Triple]) &&
                         arrSets[setType.Pair].length === arrSets[setType.Triple].length) {
-                        return this.OutType.Plane;
+                        return {nType: this.OutType.PlaneWithPairs,
+                            count: arrSets[setType.Triple].length,
+                            keyPoker: arrSets[setType.Triple].pop()};
                     }
                     break;
                 default:
@@ -258,6 +274,32 @@ module.exports = {
             }
         }
 
-        return this.OutType.Error;
+        return {nType: this.OutType.Error};
+    },
+
+    compareOutType: function (pokerTypeA, pokerTypeB) {
+        if (pokerTypeA.nType === pokerTypeB)
+        {
+            if (pokerTypeA.nType === this.OutType.Straight || 
+                pokerTypeA.nType === this.OutType.StraightPairs || 
+                pokerTypeA.nType === this.OutType.StraightThree || 
+                pokerTypeA.nType === this.OutType.Plane || 
+                pokerTypeA.nType === this.OutType.PlaneWithPairs) {
+                return pokerTypeB.count === pokerTypeA.count && 
+                    pokerTypeB.keyPoker > pokerTypeA.keyPoker
+            } else {
+                return pokerTypeB.keyPoker > pokerTypeA.keyPoker
+            }
+        } else {
+            if (pokerTypeA.nType === this.OutType.Rocket) {
+                return false;
+            } else if (pokerTypeB.nType === this.OutType.Rocket) {
+                return true;
+            } else if (pokerTypeB.nType === this.OutType.Bomb) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     },
 };
