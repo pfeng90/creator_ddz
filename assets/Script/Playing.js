@@ -1,5 +1,6 @@
 var Event = require('event');
 var Pokers = require('pokers');
+var Alert = require('Alert');
 
 cc.Class({
     extends: cc.Component,
@@ -18,6 +19,7 @@ cc.Class({
         ndDeal : cc.Node,
         ndRaise : cc.Node,
         ndSingleGame: cc.Node,
+        ndAlert: Alert,
     },
 
     // use this for initialization
@@ -200,9 +202,8 @@ cc.Class({
                 data: selectData,
             });
         } else {
-            console.log('wrong type');
+            this.ndAlert.showAlert('不符合出牌规则');
         }
-        
     },
 
     // called every frame, uncomment this function to activate update callback
