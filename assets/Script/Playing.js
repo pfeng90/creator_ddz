@@ -102,6 +102,10 @@ cc.Class({
             console.log('Game End');
         });
 
+        this.ndSingleGame.on(Event.S2C_ERROR_CODE, (event) => {
+            this.ndAlert.showAlert('不符合出牌规则');
+        });
+
         this.node.on(Event.DEAL_BEGIN, event => {
         });
 

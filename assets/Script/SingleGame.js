@@ -59,10 +59,6 @@ cc.Class({
 
         this.node.on(Event.C2S_PLAYER_HANDLE, (event) => {
             this._logic.playPokers(event.detail.playerIndex, event.detail.data);
-            this.node.emit(Event.S2C_TABLE_SYNC, {
-                index: event.detail.playerIndex,
-                data: event.detail.data,
-            });
         });
     },
 
@@ -118,16 +114,35 @@ cc.Class({
                 var pokerSet = this._arrPokerSets[nPlayerIndex];
                 arrPokers.push(pokerSet.pop());
                 this._logic.playPokers(nPlayerIndex, arrPokers);
-                this.node.emit(Event.S2C_TABLE_SYNC, {
-                    index: nPlayerIndex,
-                    data: arrPokers,
-                });
             }, Utils.getRandomInt(2, 5)); 
         }
     },
 
     onGameEnd: function () {
         this.node.emit(Event.S2C_GAME_END); 
+    },
+
+    onServerError: function (errorCode, detail) {
+        if (errorCode === SingleLogic.ErrorCode.WrongPokerType) {
+            if (detail.nIndex !== 0) {
+                this._logic.playPokers(detail.nIndex, []);
+            } else {
+                this.node.emit(Event.S2C_ERROR_CODE); 
+            }
+        }
+    },
+
+    onServerBroadcast: function (broadcastType, detail) {
+        switch(broadcastType) {
+            case SingleLogic.BroadcastType.OutputPokers:
+                this.node.emit(Event.S2C_TABLE_SYNC, {
+                    index: detail.nPlayerIndex,
+                    data: detail.arrPokers,
+                });
+                break;
+            default:
+                break;
+        }
     },
 
     // called every frame, uncomment this function to activate update callback

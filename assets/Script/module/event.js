@@ -51,4 +51,7 @@ module.exports = {
 
     // 牌局结束
     S2C_GAME_END : 'S2C_GAME_END',
+
+    // 错误代码
+    S2C_ERROR_CODE : 'S2C_ERROR_CODE',
 };

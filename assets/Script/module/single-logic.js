@@ -28,7 +28,10 @@ class SingleLogic {
         // 加倍个数
         this.nRaiseCount = 0;
         // 上把牌型
-        this.oPokerType = {};
+        this.oCurrentPokerType = {
+            nType: null,
+            nIndex: null,
+        };
         this._initState();
     }
 
@@ -83,6 +86,10 @@ class SingleLogic {
             });
             this.nRound = 0;
             this.arrPreLorder = [];
+            this.oCurrentPokerType = {
+                nType: null,
+                nIndex: null,
+            };
             setTimeout(() => {
                 this._evaluate(SingleLogic.StateEvent.Next);
             }, 2000);
@@ -103,7 +110,6 @@ class SingleLogic {
         });
 
         play.entry( () => {
-            this.oPokerType = {};
             this.delegate.onPlayerHandle(this.nTurnIndex);
         });
 
@@ -194,17 +200,38 @@ class SingleLogic {
     }
 
     playPokers(nPlayerIndex, arrPokers) {
-        let outType = Pokers.getOutputType(arrPokers);
-        console.log(outType);
-        let arrPokerSet = this.arrPokerSets[nPlayerIndex];
-        if (arrPokerSet) {
-            arrPokerSet = arrPokerSet.filter(poker => !arrPokers.includes(poker));
-            this.arrPokerSets[nPlayerIndex] = arrPokerSet;
-            if (arrPokerSet.length === 0) {
-                this._evaluate(SingleLogic.StateEvent.Next);
+        if (arrPokers.length === 0) {
+            this.nTurnIndex = (this.nTurnIndex + 1) % PLAYER_MAX_COUNT;
+            this._evaluate(SingleLogic.StateEvent.Turn);
+        } else {
+            let outType = Pokers.getOutputType(arrPokers);
+            // 跟上轮牌型做比较
+            if (this.oCurrentPokerType.nIndex === nPlayerIndex || 
+                Pokers.compareOutType(this.oCurrentPokerType.nType, outType)) {
+                this.oCurrentPokerType.nType = outType;
+                this.oCurrentPokerType.nIndex = nPlayerIndex;
+
+                let arrPokerSet = this.arrPokerSets[nPlayerIndex];
+                if (arrPokerSet) {
+                    arrPokerSet = arrPokerSet.filter(poker => !arrPokers.includes(poker));
+                    this.arrPokerSets[nPlayerIndex] = arrPokerSet;
+                    if (arrPokerSet.length === 0) {
+                        this._evaluate(SingleLogic.StateEvent.Next);
+                    } else {
+                        this.nTurnIndex = (this.nTurnIndex + 1) % PLAYER_MAX_COUNT;
+                        this._evaluate(SingleLogic.StateEvent.Turn);
+                    }
+
+                    this.delegate.onServerBroadcast(SingleLogic.BroadcastType.OutputPokers, {
+                        nPlayerIndex: nPlayerIndex,
+                        arrPokers: arrPokers,
+                    });
+                }
+            // 牌型比较失败
             } else {
-                this.nTurnIndex = (this.nTurnIndex + 1) % PLAYER_MAX_COUNT;
-                this._evaluate(SingleLogic.StateEvent.Turn);
+                this.delegate.onServerError(SingleLogic.ErrorCode.WrongPokerType, {
+                    nIndex: nPlayerIndex,
+                });
             }
         }
    }
@@ -230,6 +257,14 @@ SingleLogic.StateEvent = {
     Turn : 'turn',
     // 重新发牌
     ReDeal: 'redeal',
+};
+
+SingleLogic.BroadcastType = {
+    OutputPokers: 0, // 玩家出牌
+};
+
+SingleLogic.ErrorCode = {
+    WrongPokerType: 0, // 牌型比较错误
 };
 
 module.exports = SingleLogic;

@@ -278,7 +278,10 @@ module.exports = {
     },
 
     compareOutType: function (pokerTypeA, pokerTypeB) {
-        if (pokerTypeA.nType === pokerTypeB)
+        if (pokerTypeA == null) {
+            return true;
+        }
+        if (pokerTypeA.nType === pokerTypeB.nType)
         {
             if (pokerTypeA.nType === this.OutType.Straight || 
                 pokerTypeA.nType === this.OutType.StraightPairs || 
