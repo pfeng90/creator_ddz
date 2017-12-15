@@ -48,7 +48,6 @@ module.exports = {
         Three: 3,
         ThreeWithOne: 4,
         ThreeWithPair: 5,
-        Straight: 6,
         Plane: 7,
         PlaneWithPairs: 8,
         FourWithTwo: 9,
@@ -304,5 +303,76 @@ module.exports = {
                 return false;
             }
         }
+    },
+
+    findBiggerPokers: function(handlePokers, pokerType) {
+        if (pokerType.nType) {
+            var sortedPokers = this.sortPokers(handlePokers);
+            var setType = {
+                Single : 0,
+                Pair : 1,
+                Triple: 2,
+                Quadruple: 3,
+                Straight: 4,
+            }
+            var arrSets = [
+                [], // 单牌
+                [], // 对子
+                [], // 三条
+                [], // 四条
+                [], // 顺子
+            ];
+            var fSetContinue = function (s) {
+                return (s[s.length - 1] - s[0] + 1) === s.length;
+            }
+            var count = 0;
+            var lastPoint = null;
+            var lastIndex = sortedPokers.length - 1;
+            sortedPokers.forEach((poker, index) => {
+                if (lastPoint) {
+                    if (lastPoint === poker.point) {
+                        count++;
+                    } else {
+                        arrSets[count].push(lastPoint);
+                        count = 0;
+                    }
+                }
+                lastPoint = poker.point;
+                if (index === lastIndex) {
+                    arrSets[count].push(poker.point);
+                }
+                arrSets[setType.Straight].push(poker.point);
+            });
+
+            arrSets[setType.Straight] = [...new Set(arrSets[setType.Straight])];
+
+            switch(pokerType.nType) {
+                case this.OutType.Single:
+                    break;
+                case this.OutType.Pair: 
+                    break;
+                case this.OutType.Three: 
+                    break;
+                case this.OutType.ThreeWithOne: 
+                    break;
+                case this.OutType.ThreeWithPair: 
+                    break;
+                case this.OutType.Plane: 
+                    break;
+                case this.OutType.PlaneWithPairs: 
+                    break;
+                case this.OutType.FourWithTwo: 
+                    break;
+                case this.OutType.FourWithPairs: 
+                    break;
+                case this.OutType.Straight: 
+                    break;
+                case this.OutType.StraightPairs: 
+                    break;
+                case this.OutType.StraightThree: 
+                    break;
+            }
+        }
+        return [];
     },
 };
