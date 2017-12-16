@@ -322,8 +322,34 @@ module.exports = {
                 [], // 四条
                 [], // 顺子
             ];
-            var fSetContinue = function (s) {
-                return (s[s.length - 1] - s[0] + 1) === s.length;
+            var funcFindContinue = function (s) {
+                var arrContinue = [];
+                var objContinue = {
+                    index: null,
+                    count: null,
+                }
+                s.forEach((point, index) => {
+                    if (objContinue.index) {
+                        if (point < this.Point.Two && point === objContinue.index + 1) {
+                            objContinue.count++;
+                        } else {
+                            if (objContinue.count > 0) {
+                                arrContinue.push(objContinue);
+                            }
+                            objContinue.index = point;
+                            objContinue.count = 0;
+                        }
+                    } else {
+                        objContinue.index = point;
+                        objContinue.count = 0;
+                    }
+                    if (index === s.length - 1) {
+                        if (objContinue.count > 0) {
+                            arrContinue.push(objContinue);
+                        }
+                    }
+                })
+                return arrContinue;
             }
             var count = 0;
             var lastPoint = null;
@@ -345,17 +371,86 @@ module.exports = {
             });
 
             arrSets[setType.Straight] = [...new Set(arrSets[setType.Straight])];
+            var arrCon = funcFindContinue(arrSets[setType.Straight]);
 
+            var arrOut = [];
             switch(pokerType.nType) {
                 case this.OutType.Single:
+                    var s = arrSets[setType.Single];
+                    for (var i = 0; i < s.length; i++) {
+                        if (s[i] > pokerType.keyPoker) {
+                            arrOut.push({
+                                point: s[i],
+                                count: 1,
+                            })
+                            break;
+                        }
+                    }
                     break;
-                case this.OutType.Pair: 
+                case this.OutType.Pair:
+                    var s = arrSets[setType.Pair];
+                    for (var i = 0; i < s.length; i++) {
+                        if (s[i] > pokerType.keyPoker) {
+                            arrOut.push({
+                                point: s[i],
+                                count: 2,
+                            })
+                            break;
+                        }
+                    }
                     break;
-                case this.OutType.Three: 
+                case this.OutType.Three:
+                    var s = arrSets[setType.Triple];
+                    for (var i = 0; i < s.length; i++) {
+                        if (s[i] > pokerType.keyPoker) {
+                            arrOut.push({
+                                point: s[i],
+                                count: 3,
+                            })
+                            break;
+                        }
+                    }
                     break;
-                case this.OutType.ThreeWithOne: 
+                case this.OutType.ThreeWithOne:
+                    var s = arrSets[setType.Triple];
+                    for (var i = 0; i < s.length; i++) {
+                        if (s[i] > pokerType.keyPoker) {
+                            arrOut.push({
+                                point: s[i],
+                                count: 3,
+                            })
+                            break;
+                        }
+                    }
+                    if (arrSets[setType.Single].length > 0) {
+                        arrOut.push({
+                            point: arrSets[setType.Single][0],
+                            count: 1,
+                        })
+                    } else if (arrSets[setType.Pair].length > 0) {
+                        arrOut.push({
+                            point: arrSets[setType.Pair][0],
+                            count: 1,
+                        }) 
+                    }
                     break;
-                case this.OutType.ThreeWithPair: 
+                case this.OutType.ThreeWithPair:
+                    var s = arrSets[setType.Triple];
+                    for (var i = 0; i < s.length; i++) {
+                        if (s[i] > pokerType.keyPoker) {
+                            arrOut.push({
+                                point: s[i],
+                                count: 3,
+                            })
+                            break;
+                        }
+                    }
+                    if (arrSets[setType.Pair].length > 0) {
+                        arrOut.push({
+                            point: arrSets[setType.Pair][0],
+                            count: 2,
+                        }) 
+                    }
                     break;
                 case this.OutType.Plane: 
                     break;

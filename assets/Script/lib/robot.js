@@ -17,3 +17,5 @@ class Robot {
         return this.arrHanderPokers[0];
     }
 }
+
+module.exports = Robot;

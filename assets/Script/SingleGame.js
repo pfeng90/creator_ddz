@@ -2,6 +2,7 @@ var SingleLogic = require('single-logic');
 var Event = require('event');
 var SingleData = require('single-data');
 var Utils = require('utils');
+var Robot = require('robot');
 
 cc.Class({
     extends: cc.Component,
@@ -19,6 +20,7 @@ cc.Class({
         // ...
         _logic : null,
         _arrPokerSets : null,
+        _arrRobots : [],
     },
 
     // use this for initialization
@@ -65,6 +67,12 @@ cc.Class({
     onGetDealPokers: function (pokerData) {
         this._arrPokerSets = null;
         this._arrPokerSets = pokerData.handPokers;
+        this._arrRobots = [];
+        pokerData.handPokers.forEach((arrPokers, index) => {
+            if (index !== 0) {
+                this._arrRobots.push(new Robot(arrPokers));
+            }
+        })
         let pd = {};
         pd.handPokers = pokerData.handPokers[0];
         pd.lorderPoker = pokerData.lorderPoker;
