@@ -1,0 +1,23 @@
+{
+  "name": "creator_ddz",
+  "version": "1.0.0",
+  "description": "use CocosCreator create a single ddz game",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pfeng90/creator_ddz.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pfeng90/creator_ddz/issues"
+  },
+  "homepage": "https://github.com/pfeng90/creator_ddz#readme",
+  "dependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^4.0.1"
+  }
+}

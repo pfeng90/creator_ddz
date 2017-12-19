@@ -87,9 +87,10 @@ module.exports = {
     },
 
     sortPokers: function (arrPokers) {
-        return arrPokers.sort((a, b) => {
+        arrPokers.sort((a, b) => {
             return a.point > b.point;
         });
+        return arrPokers;
     },
 
     getOutputType: function (arrPokers) {
@@ -305,9 +306,12 @@ module.exports = {
         }
     },
 
-    findBiggerPokers: function(handlePokers, pokerType) {
-        if (pokerType.nType) {
+    findBiggerPokers: function(handlePokers, pokers) {
+        console.log('findBiggerPokers');
+        var pokerType = this.getOutputType(pokers);
+        if (pokerType && pokerType.nType) {
             var sortedPokers = this.sortPokers(handlePokers);
+            console.log(sortedPokers);
             var setType = {
                 Single : 0,
                 Pair : 1,
@@ -322,7 +326,7 @@ module.exports = {
                 [], // 四条
                 [], // 顺子
             ];
-            var funcFindContinue = function (s) {
+            var funcFindContinue = s => {
                 var arrContinue = [];
                 var objContinue = {
                     index: null,
@@ -468,6 +472,8 @@ module.exports = {
                     break;
             }
         }
-        return [];
+        console.log(arrOut);
+        var arrRes = [];
+        return arrRes;
     },
 };

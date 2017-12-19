@@ -9,8 +9,12 @@ class Robot {
         this.arrHanderPokers = this.arrHanderPokers.filter(poker => !arrPokers.includes(poker));
     }
 
-    findBiggerPokers(pokerType) {
-        return Pokers.findBiggerPokers(this.arrHanderPokers, pokerType);
+    findBiggerPokers(pokers) {
+        if (pokers.length === 0) {
+            return this.outputPoker();
+        } else {
+            return Pokers.findBiggerPokers(this.arrHanderPokers, pokers);
+        }
     }
 
     outputPoker() {

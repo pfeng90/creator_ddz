@@ -19,8 +19,8 @@ cc.Class({
         // },
         // ...
         _logic : null,
-        _arrPokerSets : null,
         _arrRobots : [],
+        _arrCurrentPokers : null,
     },
 
     // use this for initialization
@@ -65,9 +65,11 @@ cc.Class({
     },
 
     onGetDealPokers: function (pokerData) {
-        this._arrPokerSets = null;
-        this._arrPokerSets = pokerData.handPokers;
         this._arrRobots = [];
+        this._arrCurrentPokers = {
+            nPlayerIndex: null,
+            pokers: [],
+        };
         pokerData.handPokers.forEach((arrPokers, index) => {
             if (index !== 0) {
                 this._arrRobots.push(new Robot(arrPokers));
@@ -117,12 +119,18 @@ cc.Class({
     onPlayerHandle: function (nPlayerIndex) {
         this.node.emit(Event.S2C_PLAYER_HANDLE, nPlayerIndex);
         if (nPlayerIndex !== 0) {
-            this.scheduleOnce(() => {
-                var arrPokers = [];
-                var pokerSet = this._arrPokerSets[nPlayerIndex];
-                arrPokers.push(pokerSet.pop());
-                this._logic.playPokers(nPlayerIndex, arrPokers);
-            }, Utils.getRandomInt(2, 5)); 
+            var robot = this._arrRobots[nPlayerIndex - 1];
+            if (robot) {
+                this.scheduleOnce(() => {
+                    var arrPokers = [];
+                    if (this._arrCurrentPokers.nPlayerIndex === nPlayerIndex) {
+                        arrPokers = robot.outputPoker();
+                    } else {
+                        arrPokers = robot.findBiggerPokers(this._arrCurrentPokers.pokers);
+                    }
+                    this._logic.playPokers(nPlayerIndex, arrPokers);
+                }, Utils.getRandomInt(2, 5)); 
+            }
         }
     },
 
@@ -143,6 +151,14 @@ cc.Class({
     onServerBroadcast: function (broadcastType, detail) {
         switch(broadcastType) {
             case SingleLogic.BroadcastType.OutputPokers:
+                var robot = this._arrRobots[detail.nPlayerIndex - 1];
+                if (robot) {
+                    robot.removeHandlePoker(detail.arrPokers);
+                }
+                if (detail.arrPokers.length > 0) {
+                    this._arrCurrentPokers.nPlayerIndex = detail.nPlayerIndex;
+                    this._arrCurrentPokers.pokers = detail.arrPokers;
+                }
                 this.node.emit(Event.S2C_TABLE_SYNC, {
                     index: detail.nPlayerIndex,
                     data: detail.arrPokers,
