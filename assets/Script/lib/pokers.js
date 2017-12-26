@@ -103,7 +103,7 @@ module.exports = {
             Pair : 1,
             Triple: 2,
             Quadruple: 3,
-        }
+        };
         var arrSets = [
             [], // 单牌
             [], // 对子
@@ -112,7 +112,7 @@ module.exports = {
         ];
         var fSetContinue = function (s) {
             return (s[s.length - 1] - s[0] + 1) === s.length;
-        }
+        };
         var count = 0;
         var lastPoint = null;
         var lastIndex = sortedPokers.length - 1;
@@ -153,7 +153,8 @@ module.exports = {
                         break;
                     case setType.Pair:
                         if (s.length === 1) {
-                            return this.OutType.Pair;
+                            return {nType: this.OutType.Pair,
+                                    keyPoker: s.pop()};
                         } else if (s.length === 2) {
                             return {nType: this.OutType.Error};
                         } else if (fSetContinue(s)) {
@@ -166,7 +167,8 @@ module.exports = {
                         break;
                     case setType.Triple:
                         if (s.length === 1) {
-                            return this.OutType.Three;
+                            return {nType: this.OutType.Three,
+                                    keyPoker: s.pop()};
                         } else if (s.length === 2) {
                             return {nType: this.OutType.Plane,
                                 keyPoker: s.pop()};
@@ -180,7 +182,8 @@ module.exports = {
                         break;
                     case setType.Quadruple:
                         if (s.length === 1) {
-                            return this.OutType.Bomb;
+                            return {nType: this.OutType.Bomb,
+                                keyPoker: s.pop()};
                         } else {
                             return {nType: this.OutType.Error};
                         }
@@ -307,18 +310,17 @@ module.exports = {
     },
 
     findBiggerPokers: function(handlePokers, pokers) {
-        console.log('findBiggerPokers');
         var pokerType = this.getOutputType(pokers);
+        var arrRes = [];
         if (pokerType && pokerType.nType) {
             var sortedPokers = this.sortPokers(handlePokers);
-            console.log(sortedPokers);
             var setType = {
                 Single : 0,
                 Pair : 1,
                 Triple: 2,
                 Quadruple: 3,
                 Straight: 4,
-            }
+            };
             var arrSets = [
                 [], // 单牌
                 [], // 对子
@@ -331,7 +333,7 @@ module.exports = {
                 var objContinue = {
                     index: null,
                     count: null,
-                }
+                };
                 s.forEach((point, index) => {
                     if (objContinue.index) {
                         if (point < this.Point.Two && point === objContinue.index + 1) {
@@ -352,9 +354,9 @@ module.exports = {
                             arrContinue.push(objContinue);
                         }
                     }
-                })
+                });
                 return arrContinue;
-            }
+            };
             var count = 0;
             var lastPoint = null;
             var lastIndex = sortedPokers.length - 1;
@@ -386,7 +388,7 @@ module.exports = {
                             arrOut.push({
                                 point: s[i],
                                 count: 1,
-                            })
+                            });
                             break;
                         }
                     }
@@ -398,7 +400,7 @@ module.exports = {
                             arrOut.push({
                                 point: s[i],
                                 count: 2,
-                            })
+                            });
                             break;
                         }
                     }
@@ -410,7 +412,7 @@ module.exports = {
                             arrOut.push({
                                 point: s[i],
                                 count: 3,
-                            })
+                            });
                             break;
                         }
                     }
@@ -422,7 +424,7 @@ module.exports = {
                             arrOut.push({
                                 point: s[i],
                                 count: 3,
-                            })
+                            });
                             break;
                         }
                     }
@@ -445,7 +447,7 @@ module.exports = {
                             arrOut.push({
                                 point: s[i],
                                 count: 3,
-                            })
+                            });
                             break;
                         }
                     }
@@ -456,13 +458,13 @@ module.exports = {
                         }) 
                     }
                     break;
-                case this.OutType.Plane: 
+                case this.OutType.Plane:
                     break;
-                case this.OutType.PlaneWithPairs: 
+                case this.OutType.PlaneWithPairs:
                     break;
-                case this.OutType.FourWithTwo: 
+                case this.OutType.FourWithTwo:
                     break;
-                case this.OutType.FourWithPairs: 
+                case this.OutType.FourWithPairs:
                     break;
                 case this.OutType.Straight: 
                     break;
@@ -471,9 +473,20 @@ module.exports = {
                 case this.OutType.StraightThree: 
                     break;
             }
+
+            arrOut.forEach(out => {
+                for (var i = 0; i < sortedPokers.length; i++) {
+                    var poker = sortedPokers[i];
+                    if (poker.point === out.point) {
+                        arrRes.push(poker);
+                        out.count--;
+                        if (out.count === 0) {
+                            break;
+                        }
+                    }
+                }
+            });
         }
-        console.log(arrOut);
-        var arrRes = [];
         return arrRes;
     },
 };

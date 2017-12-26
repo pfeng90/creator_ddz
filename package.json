@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/pfeng90/creator_ddz#readme",
   "dependencies": {
+    "app-module-path": "^2.2.0",
     "chai": "^4.1.2",
     "mocha": "^4.0.1"
   }
