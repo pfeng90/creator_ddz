@@ -1,4 +1,4 @@
-require('app-module-path').addPath(__dirname+'/../assets/Script/lib');
+require('app-module-path').addPath(__dirname + '/../assets/Script/lib');
 var expect = require('chai').expect;
 var Robot = require('robot');
 describe('Robot', function () {
@@ -18,11 +18,12 @@ describe('Robot', function () {
                     suit: 2,
                 },
             ]);
-            expect(robot.outputPoker()).eql(
-                {
-                    point: 5,
-                    suit: 2,
-                }
+            expect(robot.outputPoker()).eql([
+                    {
+                        point: 5,
+                        suit: 2,
+                    }
+                ]
             );
         });
     });

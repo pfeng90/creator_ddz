@@ -18,7 +18,7 @@ class Robot {
     }
 
     outputPoker() {
-        return this.arrHanderPokers[0];
+        return [this.arrHanderPokers[0]];
     }
 }
 
