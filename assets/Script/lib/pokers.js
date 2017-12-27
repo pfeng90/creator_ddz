@@ -88,7 +88,7 @@ module.exports = {
 
     sortPokers: function (arrPokers) {
         arrPokers.sort((a, b) => {
-            return a.point > b.point;
+            return a.point === b.point ? a.suit - b.suit : a.point - b.point;
         });
         return arrPokers;
     },
@@ -332,27 +332,37 @@ module.exports = {
                 var arrContinue = [];
                 var objContinue = {
                     index: null,
-                    count: null,
+                    count: 1,
                 };
                 s.forEach((point, index) => {
-                    if (objContinue.index) {
+                    if (index === 0) {
+                        objContinue.index = point;
+                        objContinue.count = 1;
+                    } else if (index === s.length - 1) {
+                        if (point < this.Point.Two && point === objContinue.index + 1) {
+                            objContinue.count++;
+                            objContinue.index = point;
+                        }
+
+                        if (objContinue.count > 1) {
+                            arrContinue.push({
+                                index: objContinue.index,
+                                count: objContinue.count,
+                            });
+                        }
+                    } else {
                         if (point < this.Point.Two && point === objContinue.index + 1) {
                             objContinue.count++;
                         } else {
-                            if (objContinue.count > 0) {
-                                arrContinue.push(objContinue);
+                            if (objContinue.count > 1) {
+                                arrContinue.push({
+                                    index: objContinue.index,
+                                    count: objContinue.count,
+                                });
                             }
-                            objContinue.index = point;
-                            objContinue.count = 0;
+                            objContinue.count = 1;
                         }
-                    } else {
                         objContinue.index = point;
-                        objContinue.count = 0;
-                    }
-                    if (index === s.length - 1) {
-                        if (objContinue.count > 0) {
-                            arrContinue.push(objContinue);
-                        }
                     }
                 });
                 return arrContinue;
@@ -377,7 +387,6 @@ module.exports = {
             });
 
             arrSets[setType.Straight] = [...new Set(arrSets[setType.Straight])];
-            var arrCon = funcFindContinue(arrSets[setType.Straight]);
 
             var arrOut = [];
             switch(pokerType.nType) {
@@ -459,6 +468,32 @@ module.exports = {
                     }
                     break;
                 case this.OutType.Plane:
+                    var s = arrSets[setType.Triple];
+                    var sc = funcFindContinue(s);
+                    var keyPoints = null;
+                    for(var i = 0; i < sc.length; i++) {
+                        var scs = sc[i];
+                        if (scs.count >= pokerType.count && scs.index >= pokerType.keyPoker) {
+                            keyPoints = scs;
+                            break;
+                        }
+                    }
+                    if (keyPoints) {
+                        if (arrSets[setType.Single].length >= pokerType.count) {
+                            for(var j = 0; j < pokerType.count; j++) {
+                                arrOut.push({
+                                    point: (keyPoints.index - keyPoints.count + 1 + j),
+                                    count: 3,
+                                })
+                            }
+                            for(var i = 0; i < pokerType.count; i++) {
+                                arrOut.push({
+                                    point: arrSets[setType.Single][i],
+                                    count: 1,
+                                })
+                            }
+                        }
+                    }
                     break;
                 case this.OutType.PlaneWithPairs:
                     break;

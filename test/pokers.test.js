@@ -1,4 +1,4 @@
-require('app-module-path').addPath(__dirname+'/../assets/Script/lib');
+require('app-module-path').addPath(__dirname + '/../assets/Script/lib');
 var expect = require('chai').expect;
 var Pokers = require('pokers');
 describe('Pokers', function () {
@@ -10,31 +10,96 @@ describe('Pokers', function () {
                     suit: 2,
                 },
                 {
-                    point: 3,
-                    suit: 2,
+                    point: 5,
+                    suit: 3,
                 },
                 {
                     point: 4,
+                    suit: 3,
+                },
+                {
+                    point: 5,
+                    suit: 1,
+                },
+                {
+                    point: 7,
                     suit: 2,
                 },
-            ])).eql([{
-                    point: 3,
+                {
+                    point: 7,
+                    suit: 1,
+                },
+                {
+                    point: 9,
+                    suit: 1,
+                },
+                {
+                    point: 6,
+                    suit: 1,
+                },
+                {
+                    point: 6,
                     suit: 2,
                 },
-                    {
-                        point: 4,
-                        suit: 2,
-                    },
-                    {
-                        point: 5,
-                        suit: 2,
-                    }]
-            );
+                {
+                    point: 6,
+                    suit: 3,
+                },
+                {
+                    point: 10,
+                    suit: 1,
+                },
+            ])).eql([
+                {
+                    "point": 4,
+                    "suit": 3,
+                },
+                {
+                    "point": 5,
+                    "suit": 1,
+                },
+                {
+                    "point": 5,
+                    "suit": 2,
+                },
+                {
+                    "point": 5,
+                    "suit": 3,
+                },
+                {
+                    "point": 6,
+                    "suit": 1,
+                },
+                {
+                    "point": 6,
+                    "suit": 2,
+                },
+                {
+                    "point": 6,
+                    "suit": 3,
+                },
+                {
+                    "point": 7,
+                    "suit": 1,
+                },
+                {
+                    "point": 7,
+                    "suit": 2,
+                },
+                {
+                    "point": 9,
+                    "suit": 1,
+                },
+                {
+                    "point": 10,
+                    "suit": 1,
+                }
+            ]);
         });
     });
 
     describe('#findBiggerPokers()', function () {
-        it('findBiggerPokers - single.', function () {
+        it('single.', function () {
             expect(Pokers.findBiggerPokers([
                 {
                     point: 5,
@@ -62,7 +127,7 @@ describe('Pokers', function () {
             );
         });
 
-        it('findBiggerPokers - pair.', function () {
+        it('pair.', function () {
             expect(Pokers.findBiggerPokers([
                 {
                     point: 5,
@@ -98,7 +163,7 @@ describe('Pokers', function () {
             );
         });
 
-        it('findBiggerPokers - three.', function () {
+        it('three.', function () {
             expect(Pokers.findBiggerPokers([
                 {
                     point: 5,
@@ -132,21 +197,21 @@ describe('Pokers', function () {
             ])).eql([
                     {
                         point: 5,
+                        suit: 1,
+                    },
+                    {
+                        point: 5,
                         suit: 2,
                     },
                     {
                         point: 5,
                         suit: 3,
-                    },
-                    {
-                        point: 5,
-                        suit: 1,
                     }
                 ]
             );
         });
 
-        it('findBiggerPokers - three_one.', function () {
+        it('three_one.', function () {
             expect(Pokers.findBiggerPokers([
                 {
                     point: 5,
@@ -184,15 +249,15 @@ describe('Pokers', function () {
             ])).eql([
                     {
                         point: 5,
+                        suit: 1,
+                    },
+                    {
+                        point: 5,
                         suit: 2,
                     },
                     {
                         point: 5,
                         suit: 3,
-                    },
-                    {
-                        point: 5,
-                        suit: 1,
                     },
                     {
                         point: 4,
@@ -202,7 +267,7 @@ describe('Pokers', function () {
             );
         });
 
-        it('findBiggerPokers - three_two.', function () {
+        it('three_two.', function () {
             expect(Pokers.findBiggerPokers([
                 {
                     point: 5,
@@ -256,6 +321,10 @@ describe('Pokers', function () {
             ])).eql([
                     {
                         point: 5,
+                        suit: 1,
+                    },
+                    {
+                        point: 5,
                         suit: 2,
                     },
                     {
@@ -263,15 +332,127 @@ describe('Pokers', function () {
                         suit: 3,
                     },
                     {
-                        point: 5,
+                        point: 7,
                         suit: 1,
                     },
                     {
                         point: 7,
                         suit: 2,
+                    }
+                ]
+            );
+        });
+
+        it('plane.', function () {
+            expect(Pokers.findBiggerPokers([
+                {
+                    point: 5,
+                    suit: 2,
+                },
+                {
+                    point: 5,
+                    suit: 3,
+                },
+                {
+                    point: 4,
+                    suit: 3,
+                },
+                {
+                    point: 5,
+                    suit: 1,
+                },
+                {
+                    point: 7,
+                    suit: 2,
+                },
+                {
+                    point: 7,
+                    suit: 1,
+                },
+                {
+                    point: 9,
+                    suit: 1,
+                },
+                {
+                    point: 6,
+                    suit: 1,
+                },
+                {
+                    point: 6,
+                    suit: 2,
+                },
+                {
+                    point: 6,
+                    suit: 3,
+                },
+                {
+                    point: 10,
+                    suit: 1,
+                },
+            ], [
+                {
+                    point: 3,
+                    suit: 2,
+                },
+                {
+                    point: 3,
+                    suit: 1,
+                },
+                {
+                    point: 3,
+                    suit: 0,
+                },
+                {
+                    point: 4,
+                    suit: 2,
+                },
+                {
+                    point: 4,
+                    suit: 1,
+                },
+                {
+                    point: 4,
+                    suit: 0,
+                },
+                {
+                    point: 6,
+                    suit: 0,
+                },
+                {
+                    point: 8,
+                    suit: 0,
+                },
+            ])).eql([
+                    {
+                        point: 5,
+                        suit: 1,
                     },
                     {
-                        point: 7,
+                        point: 5,
+                        suit: 2,
+                    },
+                    {
+                        point: 5,
+                        suit: 3,
+                    },
+                    {
+                        point: 6,
+                        suit: 1,
+                    },
+                    {
+                        point: 6,
+                        suit: 2,
+                    },
+                    {
+                        point: 6,
+                        suit: 3,
+                    },
+                    {
+                        point: 4,
+                        suit: 3,
+                    },
+                    {
+                        point: 9,
                         suit: 1,
                     }
                 ]
